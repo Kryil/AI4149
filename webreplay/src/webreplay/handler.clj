@@ -14,6 +14,7 @@
                                       (send! channel data)))))
 
 (defroutes app-routes
+  (GET "/" [] (response/file-response "html/main.html" {:root "resources/public"}))
   (GET "/game" [] (response/file-response "html/game.html" {:root "resources/public"}))
   (GET "/ws" [] websocket-handler)
   (route/files "/static/")
