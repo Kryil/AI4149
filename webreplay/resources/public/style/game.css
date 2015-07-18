@@ -11,6 +11,12 @@ body {
     background-color: #333333;
 }
 
+#info-container > h1 {
+    font-size: 20px;
+    margin: 10px;
+    color: white;
+}
+
 #gamefield-container {
     float: right;
     margin: 0;
