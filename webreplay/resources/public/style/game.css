@@ -1,0 +1,9 @@
+#gamefield-container {
+    width: 100%;
+}
+
+#gamefield {
+    display: block;
+    width: 500px;
+    margin: 50px auto;
+}
