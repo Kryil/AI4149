@@ -1,0 +1,76 @@
+{
+    "gamefield": {
+        "size": [10, 10],
+        "walls": [
+            [0, 6],
+            [1, 6],
+            [2, 6],
+            [3, 6],
+            [4, 4],
+            [4, 5],
+            [4, 6],
+            [5, 0],
+            [5, 1],
+            [5, 2],
+            [6, 5],
+            [6, 6],
+            [6, 8],
+            [6, 9],
+            [7, 5],
+            [8, 5],
+            [9, 5]
+        ],
+        "resources": [
+            [1, 8],
+            [2, 8],
+            [3, 8],
+            [8, 1],
+            [8, 2],
+            [8, 3]
+        ]
+    },
+    "units": [
+        {
+            "type": "Commander",
+            "location": [2, 4],
+            "health": 100
+        },
+        {
+            "type": "Base",
+            "location": [1, 1],
+            "health": 100
+        },
+        {
+            "type": "Squaddy",
+            "location": [3, 2],
+            "health": 100
+        },
+        {
+            "type": "Squaddy",
+            "location": [4, 3],
+            "health": 81
+        }
+    ],
+    "enemy-units": [
+        {
+            "type": "Commander",
+            "location": [8, 7],
+            "health": 100
+        },
+        {
+            "type": "Base",
+            "location": [8, 8],
+            "health": 100
+        },
+        {
+            "type": "Squaddy",
+            "location": [5, 7],
+            "health": 89
+        },
+        {
+            "type": "Squaddy",
+            "location": [6, 7],
+            "health": 98
+        }
+    ]
+}
