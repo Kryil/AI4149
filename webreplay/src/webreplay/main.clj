@@ -9,5 +9,7 @@
 (defn -main [& args] ;; entry point, lein run will pick up and start from here
   (let [handler (if (in-dev? args)
                   (reload/wrap-reload (site #'app-routes)) ;; only reload when dev
-                  (site app-routes))]
-    (run-server (site #'app-routes) {:port 8080})))
+                  (site app-routes))
+        port 8080]
+    (println (str "Starting server at http://localhost:" port "/"))
+    (run-server (site #'app-routes) {:port port})))
