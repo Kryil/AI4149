@@ -23,8 +23,8 @@ gameField.draw = (function() {
     };
 
     function drawFromJSON(data) {
-        canvas.width = data.gamefield.size[0]*100;
-        canvas.height = data.gamefield.size[1]*100;
+        canvas.width = data.gamefield.size[0];
+        canvas.height = data.gamefield.size[1];
         ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
 
         drawResources(data.gamefield.resources);
@@ -35,12 +35,12 @@ gameField.draw = (function() {
 
     function drawWalls(walls) {
         ctx.strokeStyle = "black";
-        ctx.lineWidth = 50;
+        ctx.lineWidth = 35;
         walls.forEach(function(el, i, array) {
             var path = new Path2D();
-            path.moveTo(el[0]*100, el[1]*100);
+            path.moveTo(el[0], el[1]);
             for (var i = 2; i < el.length; i+=2) {
-                path.lineTo(el[i]*100, el[i+1]*100);
+                path.lineTo(el[i], el[i+1]);
             };
             ctx.stroke(path);
         });
@@ -50,9 +50,9 @@ gameField.draw = (function() {
         ctx.fillStyle = "rgba(104, 58, 174, 0.25)";
         resources.forEach(function(el, i, array) {
             var path = new Path2D();
-            path.moveTo(el[0]*100, el[1]*100);
+            path.moveTo(el[0], el[1]);
             for (var i = 2; i < el.length; i+=2) {
-                path.lineTo(el[i]*100, el[i+1]*100);
+                path.lineTo(el[i], el[i+1]);
             };
             ctx.fill(path);
         });
@@ -61,7 +61,7 @@ gameField.draw = (function() {
     function drawUnits(units, status) {
         ctx.fillStyle = status === "enemies" ? "#AA0000" : "#99FF99";
         units.forEach(function(el, i, array) {
-            ctx.fillRect(el.location[0]*100, el.location[1]*100, 1*100, 1*100);
+            ctx.fillRect(el.location[0], el.location[1], 50, 50);
         });
     };
 
