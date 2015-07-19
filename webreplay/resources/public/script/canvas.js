@@ -61,7 +61,7 @@ gameField.draw = (function() {
     function drawUnits(units, status) {
         ctx.fillStyle = status === "enemies" ? "#AA0000" : "#99FF99";
         units.forEach(function(el, i, array) {
-            ctx.fillRect(el.location[1]*100, el.location[0]*100, 1*100, 1*100);
+            ctx.fillRect(el.location[0]*100, el.location[1]*100, 1*100, 1*100);
         });
     };
 
