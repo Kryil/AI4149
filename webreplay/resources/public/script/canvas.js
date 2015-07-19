@@ -49,7 +49,12 @@ gameField.draw = (function() {
     function drawResources(resources) {
         ctx.fillStyle = "rgba(104, 58, 174, 0.25)";
         resources.forEach(function(el, i, array) {
-            ctx.fillRect(el[1]*100, el[0]*100, 1*100, 1*100);
+            var path = new Path2D();
+            path.moveTo(el[0]*100, el[1]*100);
+            for (var i = 2; i < el.length; i+=2) {
+                path.lineTo(el[i]*100, el[i+1]*100);
+            };
+            ctx.fill(path);
         });
     };
 
