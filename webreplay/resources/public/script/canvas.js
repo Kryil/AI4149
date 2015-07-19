@@ -36,9 +36,9 @@ gameField.draw = (function(drawList) {
     var ctx;
 
     function initialize(newCanvas, imageUrl) {
+        background.src = imageUrl;
         canvas = newCanvas;
         ctx = canvas.getContext("2d");
-        background.src = imageUrl;
         ctx.drawImage(background, 0, 0);
     };
 
@@ -47,7 +47,7 @@ gameField.draw = (function(drawList) {
         drawCanvasBackground();
 
         drawResources(data.gamefield.resources);
-        drawWalls(data.gamefield.walls);
+        addToDrawList(data.gamefield.obstacles);
         addToDrawList(data.units, "self");
         addToDrawList(data.enemyUnits, "enemy");
 
@@ -91,6 +91,9 @@ gameField.draw = (function(drawList) {
     function addToDrawList(items, status) {
         items.forEach(function(el, i, array) {
             switch(el.type) {
+                case "Wall":
+                    drawList.push(new Wall(el));
+                    break;
                 case "Commander":
                     drawList.push(new Commander(el, status));
                     break;
