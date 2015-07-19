@@ -51,7 +51,7 @@
             "health": 81
         }
     ],
-    "enemy-units": [
+    "enemyUnits": [
         {
             "type": "Commander",
             "location": [8, 7],

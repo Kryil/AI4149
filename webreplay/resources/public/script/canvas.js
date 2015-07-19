@@ -27,8 +27,23 @@ gameField.draw = (function() {
         canvas.height = data.gamefield.size[1]*100;
         ctx.drawImage(background, 0, 0);
 
-        data.gamefield.walls.forEach(function(el, i, array) {
+        drawWalls(data.gamefield.walls);
+        drawUnits(data.units, "self");
+        drawUnits(data.enemyUnits, "enemies");
+    };
+
+    function drawWalls(walls) {
+        ctx.fillStyle = "black";
+        walls.forEach(function(el, i, array) {
             ctx.fillRect(el[1]*100, el[0]*100, 1*100, 1*100);
+        });
+    };
+
+    function drawUnits(units, status) {
+        ctx.fillStyle = status === "enemies" ? "#AA0000" : "#99FF99";
+        units.forEach(function(el, i, array) {
+            //console.log(el[1]*100, el[0]*100)
+            ctx.fillRect(el.location[1]*100, el.location[0]*100, 1*100, 1*100);
         });
     };
 
