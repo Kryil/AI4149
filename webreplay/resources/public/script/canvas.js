@@ -10,7 +10,27 @@ $(document).ready(function() {
 
 var gameField = {};
 
-gameField.draw = (function() {
+gamefield.drawList = (function() {
+    var items = [];
+
+    function pushItem(item) {
+        items.push(item);
+    };
+
+    function drawItems(ctx) {
+        items.forEach(function(el) {
+            el.draw(ctx);
+        });
+        items = [];
+    };
+
+    return {
+        push: pushItem,
+        draw: drawItems
+    };
+})();
+
+gameField.draw = (function(drawList) {
     var background = new Image();
     var canvas;
     var ctx;
@@ -23,14 +43,24 @@ gameField.draw = (function() {
     };
 
     function drawFromJSON(data) {
-        canvas.width = data.gamefield.size[0];
-        canvas.height = data.gamefield.size[1];
-        ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+        setCanvasOptions(data.gamefield.size);
+        drawCanvasBackground();
 
         drawResources(data.gamefield.resources);
         drawWalls(data.gamefield.walls);
-        drawUnits(data.units, "self");
-        drawUnits(data.enemyUnits, "enemy");
+        addToDrawList(data.units, "self");
+        addToDrawList(data.enemyUnits, "enemy");
+
+        drawList.draw(ctx);
+    };
+
+    function setCanvasOptions(size) {
+        canvas.width = size[0];
+        canvas.height = size[1];
+    };
+
+    function drawCanvasBackground() {
+        ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
     };
 
     function drawWalls(walls) {
@@ -58,16 +88,20 @@ gameField.draw = (function() {
         });
     };
 
-    function drawUnits(units, status) {
-        units.forEach(function(el, i, array) {
+    function addToDrawList(items, status) {
+        items.forEach(function(el, i, array) {
             switch(el.type) {
-                case "Commander": new Commander(el, status).draw(ctx);
+                case "Commander":
+                    drawList.push(new Commander(el, status));
                     break;
-                case "Harvester": new Harvester(el, status).draw(ctx);
+                case "Harvester":
+                    drawList.push(new Harvester(el, status));
                     break;
-                case "Squaddy": new Squaddy(el, status).draw(ctx);
+                case "Squaddy":
+                    drawList.push(new Squaddy(el, status));
                     break;
-                case "Stronghold": new Stronghold(el, status).draw(ctx);
+                case "Stronghold":
+                    drawList.push(new Stronghold(el, status));
                     break;
             };
         });
@@ -77,4 +111,4 @@ gameField.draw = (function() {
         initial: initialize,
         fromJSON: drawFromJSON
     };
-})();
+})(gamefield.drawList);
