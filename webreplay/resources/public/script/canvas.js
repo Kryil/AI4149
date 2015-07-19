@@ -30,7 +30,7 @@ gameField.draw = (function() {
         drawResources(data.gamefield.resources);
         drawWalls(data.gamefield.walls);
         drawUnits(data.units, "self");
-        drawUnits(data.enemyUnits, "enemies");
+        drawUnits(data.enemyUnits, "enemy");
     };
 
     function drawWalls(walls) {
@@ -59,9 +59,17 @@ gameField.draw = (function() {
     };
 
     function drawUnits(units, status) {
-        ctx.fillStyle = status === "enemies" ? "#AA0000" : "#99FF99";
         units.forEach(function(el, i, array) {
-            ctx.fillRect(el.location[0], el.location[1], 50, 50);
+            switch(el.type) {
+                case "Commander": new Commander(el, status).draw(ctx);
+                    break;
+                case "Harvester": new Harvester(el, status).draw(ctx);
+                    break;
+                case "Squaddy": new Squaddy(el, status).draw(ctx);
+                    break;
+                case "Stronghold": new Stronghold(el, status).draw(ctx);
+                    break;
+            };
         });
     };
 

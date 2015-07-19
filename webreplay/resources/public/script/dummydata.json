@@ -29,7 +29,7 @@
             "health": 100
         },
         {
-            "type": "Base",
+            "type": "Stronghold",
             "location": [100, 100],
             "health": 100
         },
@@ -66,7 +66,7 @@
             "health": 100
         },
         {
-            "type": "Base",
+            "type": "Stronghold",
             "location": [3200, 3000],
             "health": 100
         },
