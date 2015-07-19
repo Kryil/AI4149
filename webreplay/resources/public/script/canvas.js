@@ -25,18 +25,24 @@ gameField.draw = (function() {
     function drawFromJSON(data) {
         canvas.width = data.gamefield.size[0]*100;
         canvas.height = data.gamefield.size[1]*100;
-        ctx.drawImage(background, 0, 0);
+        ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
 
-        drawWalls(data.gamefield.walls);
         drawResources(data.gamefield.resources);
+        drawWalls(data.gamefield.walls);
         drawUnits(data.units, "self");
         drawUnits(data.enemyUnits, "enemies");
     };
 
     function drawWalls(walls) {
-        ctx.fillStyle = "black";
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 50;
         walls.forEach(function(el, i, array) {
-            ctx.fillRect(el[1]*100, el[0]*100, 1*100, 1*100);
+            var path = new Path2D();
+            path.moveTo(el[0]*100, el[1]*100);
+            for (var i = 2; i < el.length; i+=2) {
+                path.lineTo(el[i]*100, el[i+1]*100);
+            };
+            ctx.stroke(path);
         });
     };
 
