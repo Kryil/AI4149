@@ -23,12 +23,12 @@ gameField.draw = (function() {
     };
 
     function drawFromJSON(data) {
+        canvas.width = data.gamefield.size[0]*100;
+        canvas.height = data.gamefield.size[1]*100;
         ctx.drawImage(background, 0, 0);
-        ctx.scale(canvas.width / data.gamefield.size[0],
-                  canvas.height / data.gamefield.size[1]);
 
         data.gamefield.walls.forEach(function(el, i, array) {
-            ctx.fillRect(el[1], el[0], 1, 1);
+            ctx.fillRect(el[1]*100, el[0]*100, 1*100, 1*100);
         });
     };
 
