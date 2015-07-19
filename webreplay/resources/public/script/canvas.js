@@ -28,6 +28,7 @@ gameField.draw = (function() {
         ctx.drawImage(background, 0, 0);
 
         drawWalls(data.gamefield.walls);
+        drawResources(data.gamefield.resources);
         drawUnits(data.units, "self");
         drawUnits(data.enemyUnits, "enemies");
     };
@@ -39,10 +40,16 @@ gameField.draw = (function() {
         });
     };
 
+    function drawResources(resources) {
+        ctx.fillStyle = "rgba(104, 58, 174, 0.25)";
+        resources.forEach(function(el, i, array) {
+            ctx.fillRect(el[1]*100, el[0]*100, 1*100, 1*100);
+        });
+    };
+
     function drawUnits(units, status) {
         ctx.fillStyle = status === "enemies" ? "#AA0000" : "#99FF99";
         units.forEach(function(el, i, array) {
-            //console.log(el[1]*100, el[0]*100)
             ctx.fillRect(el.location[1]*100, el.location[0]*100, 1*100, 1*100);
         });
     };
