@@ -63,19 +63,6 @@ gameField.draw = (function(drawList) {
         ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
     };
 
-    function drawWalls(walls) {
-        ctx.strokeStyle = "black";
-        ctx.lineWidth = 35;
-        walls.forEach(function(el, i, array) {
-            var path = new Path2D();
-            path.moveTo(el[0], el[1]);
-            for (var i = 2; i < el.length; i+=2) {
-                path.lineTo(el[i], el[i+1]);
-            };
-            ctx.stroke(path);
-        });
-    };
-
     function drawResources(resources) {
         ctx.fillStyle = "rgba(104, 58, 174, 0.25)";
         resources.forEach(function(el, i, array) {
