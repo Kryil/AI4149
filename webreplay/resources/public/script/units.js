@@ -42,3 +42,14 @@ function Stronghold(data, status) {
 Stronghold.prototype = Object.create(Unit.prototype);
 
 Stronghold.prototype.constructor = Stronghold;
+
+Stronghold.prototype.draw = function(ctx) {
+    ctx.fillStyle = this.status === "enemy" ? "#AA0000" : "#99FF99";
+    ctx.fillRect(this.location[0], this.location[1], 300, 300);
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 20;
+    ctx.strokeRect(this.location[0]+25, this.location[1]+25, 250, 250);
+    ctx.font = "bold 200px Arial";
+    ctx.fillStyle = "black";
+    ctx.fillText("B", this.location[0]+65, this.location[1]+220);
+};
