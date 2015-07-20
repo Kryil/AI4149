@@ -65,27 +65,19 @@ gameField.draw = (function(drawList) {
 
     function addToDrawList(items, status) {
         items.forEach(function(item) {
-            switch(item.type) {
-                case "Deposit":
-                    drawList.push(new Deposit(item));
-                    break;
-                case "Wall":
-                    drawList.push(new Wall(item));
-                    break;
-                case "Commander":
-                    drawList.push(new Commander(item, status));
-                    break;
-                case "Harvester":
-                    drawList.push(new Harvester(item, status));
-                    break;
-                case "Squaddy":
-                    drawList.push(new Squaddy(item, status));
-                    break;
-                case "Stronghold":
-                    drawList.push(new Stronghold(item, status));
-                    break;
-            };
+            drawList.push(objectWithType(item, status));
         });
+    };
+
+    function objectWithType(item, status) {
+        switch(item.type) {
+            case "Deposit": return new Deposit(item);
+            case "Wall": return new Wall(item);
+            case "Commander": return new Commander(item, status);
+            case "Harvester": return new Harvester(item, status);
+            case "Squaddy": return new Squaddy(item, status);
+            case "Stronghold": return new Stronghold(item, status);
+        };
     };
 
     return {
