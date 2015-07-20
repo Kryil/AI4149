@@ -82,6 +82,16 @@
             "health": 100
         },
         {
+            "type": "Harvester",
+            "location": [1500, 1700],
+            "health": 100
+        },
+        {
+            "type": "Harvester",
+            "location": [800, 600],
+            "health": 100
+        },
+        {
             "type": "Squaddy",
             "location": [1000, 500],
             "health": 100
@@ -116,6 +126,16 @@
         {
             "type": "Stronghold",
             "location": [3200, 3000],
+            "health": 100
+        },
+        {
+            "type": "Harvester",
+            "location": [1300, 3200],
+            "health": 100
+        },
+        {
+            "type": "Harvester",
+            "location": [1400, 3300],
             "health": 100
         },
         {
