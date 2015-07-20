@@ -2,16 +2,12 @@ function Obstacle(data) {
     this.path = data.path;
 };
 
+Obstacle.prototype = Object.create(Shape.prototype);
+
 Obstacle.prototype.draw = function(ctx) {
     ctx.strokeStyle = "black";
     ctx.lineWidth = 35;
-
-    var path = new Path2D();
-    path.moveTo(this.path[0], this.path[1]);
-    for (var i = 2; i < this.path.length; i+=2) {
-        path.lineTo(this.path[i], this.path[i+1]);
-    };
-    ctx.stroke(path);
+    ctx.stroke(this.drawPathFrom(this.path));
 };
 
 function Wall(data) {

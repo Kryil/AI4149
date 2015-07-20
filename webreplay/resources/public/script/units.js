@@ -4,6 +4,8 @@ function Unit(data, status) {
     this.status = status;
 };
 
+Unit.prototype = Object.create(Shape.prototype);
+
 Unit.prototype.draw = function(ctx) {
     ctx.fillStyle = this.status === "enemy" ? "#AA0000" : "#99FF99";
     ctx.fillRect(this.location[0], this.location[1], 50, 50);
