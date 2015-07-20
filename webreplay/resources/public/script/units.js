@@ -47,10 +47,10 @@ Harvester.prototype.constructor = Harvester;
 
 Harvester.prototype.draw = function(ctx) {
     ctx.fillStyle = this.status === "enemy" ? "#AA0000" : "#0000BF";
-    ctx.fillRect(this.location[0], this.location[1], 50, 50);
+    ctx.fillRect(this.location[0], this.location[1], 80, 80);
     ctx.fillStyle = this.status === "enemy" ? "#757575" : "#ADADAD";
-    ctx.font = "bold 45px Arial";
-    ctx.fillText("H", this.location[0]+5, this.location[1]+40);
+    ctx.font = "bold 70px Arial";
+    ctx.fillText("H", this.location[0]+6, this.location[1]+65);
 };
 
 function Squaddy(data, status) {
