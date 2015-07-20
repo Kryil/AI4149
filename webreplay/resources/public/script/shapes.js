@@ -8,3 +8,13 @@ Shape.prototype.drawPathFrom = function(points) {
     };
     return path;
 };
+
+Shape.prototype.shiftXY = function(x, y) {
+    return function(item, index) {
+        if (index % 2 === 0) {
+            return x + item;
+        } else {
+            return y + item;
+        }
+    }
+}
