@@ -18,8 +18,8 @@ gamefield.drawList = (function() {
     };
 
     function drawItems(ctx) {
-        items.forEach(function(el) {
-            el.draw(ctx);
+        items.forEach(function(item) {
+            item.draw(ctx);
         });
         items = [];
     };
@@ -46,7 +46,7 @@ gameField.draw = (function(drawList) {
         setCanvasOptions(data.gamefield.size);
         drawCanvasBackground();
 
-        drawResources(data.gamefield.resources);
+        addToDrawList(data.gamefield.territory);
         addToDrawList(data.gamefield.obstacles);
         addToDrawList(data.units, "self");
         addToDrawList(data.enemyUnits, "enemy");
@@ -63,35 +63,26 @@ gameField.draw = (function(drawList) {
         ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
     };
 
-    function drawResources(resources) {
-        ctx.fillStyle = "rgba(104, 58, 174, 0.25)";
-        resources.forEach(function(el, i, array) {
-            var path = new Path2D();
-            path.moveTo(el[0], el[1]);
-            for (var i = 2; i < el.length; i+=2) {
-                path.lineTo(el[i], el[i+1]);
-            };
-            ctx.fill(path);
-        });
-    };
-
     function addToDrawList(items, status) {
-        items.forEach(function(el, i, array) {
-            switch(el.type) {
+        items.forEach(function(item) {
+            switch(item.type) {
+                case "Deposit":
+                    drawList.push(new Deposit(item));
+                    break;
                 case "Wall":
-                    drawList.push(new Wall(el));
+                    drawList.push(new Wall(item));
                     break;
                 case "Commander":
-                    drawList.push(new Commander(el, status));
+                    drawList.push(new Commander(item, status));
                     break;
                 case "Harvester":
-                    drawList.push(new Harvester(el, status));
+                    drawList.push(new Harvester(item, status));
                     break;
                 case "Squaddy":
-                    drawList.push(new Squaddy(el, status));
+                    drawList.push(new Squaddy(item, status));
                     break;
                 case "Stronghold":
-                    drawList.push(new Stronghold(el, status));
+                    drawList.push(new Stronghold(item, status));
                     break;
             };
         });
