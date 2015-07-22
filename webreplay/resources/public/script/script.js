@@ -6,4 +6,14 @@ $(document).ready(function() {
     $.getJSON("script/dummydata.json", function(data) {
         gameField.draw.fromJSON(data);
     });
+
+    var ws = new WebSocket("ws://localhost:8080/ws", "AI4149.1");
+
+    ws.onmessage = function(evt) {
+      console.log(evt.data);
+    };
+
+    ws.onopen = function() {
+      ws.send("hello");
+    }
 });
