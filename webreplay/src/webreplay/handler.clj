@@ -6,18 +6,27 @@
             [ring.util.response :as response]
             [compojure.route :as route]))
 
+(defn dummydata []
+  (slurp "resources/public/script/dummydata.json"))
+
+(defn printCloseMsg [status]
+  (println "Channel closed: " status))
+
+(defn sendNewStatus [channel data]
+  (send! channel (dummydata)))
 
 (defn websocket-handler [request]
   (with-channel request channel
-                (on-close channel (fn [status] (println "channel closed: " status)))
-                (on-receive channel (fn [data] ;; echo it back
-                                      (println "data: " data)
-                                      (send! channel data)))))
+                (on-close channel printCloseMsg)
+                (on-receive channel (partial sendNewStatus channel))))
 
 (defroutes app-routes
-  (GET "/" [] (response/file-response "html/main.html" {:root "resources/public"}))
-  (GET "/game" [] (response/file-response "html/game.html" {:root "resources/public"}))
-  (GET "/ws" [] websocket-handler)
+  (GET "/" []
+       (response/file-response "html/main.html" {:root "resources/public"}))
+  (GET "/game" []
+       (response/file-response "html/game.html" {:root "resources/public"}))
+  (GET "/ws" []
+       websocket-handler)
   (route/resources "/")
   (route/not-found "Not Found"))
 
