@@ -4,21 +4,28 @@
         org.httpkit.server)
   (:require [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.util.response :as response]
-            [compojure.route :as route]))
+            [compojure.route :as route]
+            [clojure.data.json :as json]))
+
+(def game-channels (atom {}))
+(def game-ids (atom {}))
 
 (defn dummydata []
   (slurp "resources/public/script/dummydata.json"))
 
-(defn print-close-msg [status]
-  (println "Channel closed: " status))
+(defn clean-up [channel status]
+  (let [game-id (get @game-ids channel)]
+    (swap! game-ids dissoc channel)))
 
-(defn send-new-status [channel data]
-  (send! channel (dummydata)))
+(defn open [channel data]
+  (let [game-id (keyword (get (json/read-str data) "gameId"))]
+    (swap! game-ids assoc channel game-id)
+    (send! channel (dummydata))))
 
 (defn websocket-handler [request]
   (with-channel request channel
-                (on-close channel print-close-msg)
-                (on-receive channel (partial send-new-status channel))))
+                (on-receive channel (partial open channel))
+                (on-close channel (partial clean-up channel))))
 
 (defroutes app-routes
   (GET "/" []

@@ -7,7 +7,7 @@ $(document).ready(function() {
   gameCanvas.initialize("images/metal-tileable.png");
 
   socket.onopen = function() {
-    socket.send(JSON.stringify({game: gameIdentifier}));
+    socket.send(JSON.stringify({gameId: gameIdentifier}));
   };
 
   socket.onmessage = function(evt) {

@@ -11,5 +11,6 @@
   :profiles
   {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                         [ring-mock "0.1.5"]
-                        [ring/ring-devel "1.1.8"]]}}
+                        [ring/ring-devel "1.1.8"]
+                        [org.clojure/data.json "0.2.6"]]}}
   :main webreplay.main)
