@@ -9,16 +9,16 @@
 (defn dummydata []
   (slurp "resources/public/script/dummydata.json"))
 
-(defn printCloseMsg [status]
+(defn print-close-msg [status]
   (println "Channel closed: " status))
 
-(defn sendNewStatus [channel data]
+(defn send-new-status [channel data]
   (send! channel (dummydata)))
 
 (defn websocket-handler [request]
   (with-channel request channel
-                (on-close channel printCloseMsg)
-                (on-receive channel (partial sendNewStatus channel))))
+                (on-close channel print-close-msg)
+                (on-receive channel (partial send-new-status channel))))
 
 (defroutes app-routes
   (GET "/" []
