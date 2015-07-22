@@ -4,13 +4,16 @@ $(document).ready(function() {
   var socket = new WebSocket("ws://localhost:8080/ws", "AI4149.1");
   var gameIdentifier = location.search.split("id=")[1];
 
-  gameField.draw.initial(canvas, "images/metal-tileable.png");
-
   socket.onopen = function() {
     socket.send(JSON.stringify({game: gameIdentifier}));
   };
 
+  var gameCanvas = new GameCanvas(canvas);
+
+  gameCanvas.initialize("images/metal-tileable.png");
+
   socket.onmessage = function(evt) {
-    gameField.draw.fromJSON(JSON.parse(evt.data));
+    var gameData = new GameData(JSON.parse(evt.data));
+    gameCanvas.draw(gameData);
   };
 });

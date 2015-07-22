@@ -1,77 +1,63 @@
-var gameField = {};
 
-gamefield.drawList = (function() {
-    var items = [];
+function GameCanvas(canvas) {
+  this.canvas = canvas;
+  this.ctx = canvas.getContext("2d");
+}
 
-    function pushItem(item) {
-        items.push(item);
-    };
+GameCanvas.prototype.initialize = function(background) {
+  this.background = new Image();
+  this.background.src = background;
+  this.ctx.drawImage(this.background, 0, 0);
+}
 
-    function drawItems(ctx) {
-        items.forEach(function(item) {
-            item.draw(ctx);
-        });
-        items = [];
-    };
+GameCanvas.prototype.setCanvasSize = function(size) {
+  this.canvas.width = size[0];
+  this.canvas.height = size[1];
+};
 
-    return {
-        push: pushItem,
-        draw: drawItems
-    };
-})();
 
-gameField.draw = (function(drawList) {
-    var background = new Image();
-    var canvas;
-    var ctx;
+GameCanvas.prototype.draw = function(gameData) {
+  this.setCanvasSize(gameData.size);
 
-    function initialize(newCanvas, imageUrl) {
-        background.src = imageUrl;
-        canvas = newCanvas;
-        ctx = canvas.getContext("2d");
-        ctx.drawImage(background, 0, 0);
-    };
+  this.ctx.drawImage(this.background, 0, 0, this.canvas.width, this.canvas.height);
 
-    function drawFromJSON(data) {
-        setCanvasOptions(data.gamefield.size);
-        drawCanvasBackground();
+  var ctx = this.ctx;
+  gameData.items.forEach(function(item) {
+    item.draw(ctx);
+  });
+}
 
-        addToDrawList(data.gamefield.territory);
-        addToDrawList(data.gamefield.obstacles);
-        addToDrawList(data.units, "self");
-        addToDrawList(data.enemyUnits, "enemy");
 
-        drawList.draw(ctx);
-    };
+function GameData(data) {
+  this.items = [];
+  this.size = [500, 500];
+  
+  if (data) {
+    this.parseGameData(data);
+  }
+}
 
-    function setCanvasOptions(size) {
-        canvas.width = size[0];
-        canvas.height = size[1];
-    };
+GameData.prototype.parseGameData = function(data) {
+  this.size = data.gamefield.size;
+  var that = this;
+  data.gamefield.territory.forEach(function (i) { that.addItem(i); });
+  data.gamefield.obstacles.forEach(function (i) { that.addItem(i); });
+  data.units.forEach(function (i) { that.addItem(i, "self"); });
+  data.enemyUnits.forEach(function (i) { that.addItem(i, "enemy"); });
+}
 
-    function drawCanvasBackground() {
-        ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
-    };
+GameData.prototype.addItem = function(item, status) {
+  this.items.push(this._parseItem(item, status));
+}
 
-    function addToDrawList(items, status) {
-        items.forEach(function(item) {
-            drawList.push(objectWithType(item, status));
-        });
-    };
+GameData.prototype._parseItem = function(item, status) {
+  switch(item.type) {
+    case "Deposit": return new Deposit(item);
+    case "Wall": return new Wall(item);
+    case "Commander": return new Commander(item, status);
+    case "Harvester": return new Harvester(item, status);
+    case "Squaddy": return new Squaddy(item, status);
+    case "Stronghold": return new Stronghold(item, status);
+  };
+}
 
-    function objectWithType(item, status) {
-        switch(item.type) {
-            case "Deposit": return new Deposit(item);
-            case "Wall": return new Wall(item);
-            case "Commander": return new Commander(item, status);
-            case "Harvester": return new Harvester(item, status);
-            case "Squaddy": return new Squaddy(item, status);
-            case "Stronghold": return new Stronghold(item, status);
-        };
-    };
-
-    return {
-        initial: initialize,
-        fromJSON: drawFromJSON
-    };
-})(gamefield.drawList);
