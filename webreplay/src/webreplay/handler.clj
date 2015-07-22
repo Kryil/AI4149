@@ -11,6 +11,7 @@
   (with-channel request channel
                 (on-close channel (fn [status] (println "channel closed: " status)))
                 (on-receive channel (fn [data] ;; echo it back
+                                      (println "data: " data)
                                       (send! channel data)))))
 
 (defroutes app-routes
