@@ -9,26 +9,31 @@
   (let [lh (fn lh [iteration]
               (when (loop-fn iteration)
                 (println (str "loop-fn returned truthy on iteration " iteration))
+                (Thread/sleep 1000)
                 (future (lh (inc iteration)))
               nil))]
-    (lh 0)))
+    (future (lh 0)))
+  nil)
 
 (defn- dummydata [i]
   (try
     (slurp (str "resources/public/script/dummydata" i ".json"))
     (catch Exception e nil)))
 
+(defn- replay-iteration-data [game-id iteration]
+  (if (= game-id "dummygame")
+    (dummydata iteration)
+    nil)) ; todo get replay from storage
+
+
 (defn- replay [channel game-id] 
   (println (str "replaying game " game-id))
   (loop-while (fn [iteration]
                 (println (str game-id " iteration " iteration))
-                (if (= game-id "dummygame")
-                  (when-let [data (dummydata iteration)]
-                    (do 
-                      (send! channel data)
-                      (Thread/sleep 1000)
-                      true))
-                  nil)))) ; todo get replay from storage
+                (when-let [data (replay-iteration-data game-id iteration)]
+                  (do 
+                    (println "data ok")
+                    (send! channel data))))))
 
 (defn unsubscribe [channel status]
   (let [game-id (get @game-ids channel)]
