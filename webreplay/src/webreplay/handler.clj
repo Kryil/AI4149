@@ -10,8 +10,8 @@
 (def game-channels (atom {}))
 (def game-ids (atom {}))
 
-(defn dummydata []
-  (slurp "resources/public/script/dummydata.json"))
+(defn dummydata [i]
+  (slurp (str "resources/public/script/dummydata" i ".json")))
 
 (defn clean-up [channel status]
   (let [game-id (get @game-ids channel)]
@@ -20,7 +20,7 @@
 (defn open [channel data]
   (let [game-id (keyword (get (json/read-str data) "gameId"))]
     (swap! game-ids assoc channel game-id)
-    (send! channel (dummydata))))
+    (send! channel (dummydata 0))))
 
 (defn websocket-handler [request]
   (with-channel request channel
