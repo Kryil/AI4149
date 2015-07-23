@@ -115,6 +115,11 @@
             "type": "Squaddy",
             "location": [1600, 1650],
             "health": 100
+        },
+        {
+            "type": "Squaddy",
+            "location": [400, 200],
+            "health": 100
         }
     ],
     "enemyUnits": [
