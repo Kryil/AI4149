@@ -5,35 +5,21 @@
   (:require [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.util.response :as response]
             [compojure.route :as route]
-            [clojure.data.json :as json]))
+            [clojure.data.json :as json]
+            [webreplay.communication :as comm]))
 
-(def game-channels (atom {}))
-(def game-ids (atom {}))
-
-(defn dummydata [i]
-  (slurp (str "resources/public/script/dummydata" i ".json")))
-
-(defn clean-up [channel status]
-  (let [game-id (get @game-ids channel)]
-    (swap! game-ids dissoc channel)))
-
-(defn open [channel data]
-  (let [game-id (keyword (get (json/read-str data) "gameId"))]
-    (swap! game-ids assoc channel game-id)
-    (send! channel (dummydata 0))))
 
 (defn websocket-handler [request]
   (with-channel request channel
-                (on-receive channel (partial open channel))
-                (on-close channel (partial clean-up channel))))
+                (on-receive channel (partial comm/open channel))
+                (on-close channel (partial comm/close channel))))
 
 (defroutes app-routes
   (GET "/" []
        (response/file-response "html/main.html" {:root "resources/public"}))
   (GET "/game" []
        (response/file-response "html/game.html" {:root "resources/public"}))
-  (GET "/ws" []
-       websocket-handler)
+  (GET "/ws" [] websocket-handler)
   (route/resources "/")
   (route/not-found "Not Found"))
 
