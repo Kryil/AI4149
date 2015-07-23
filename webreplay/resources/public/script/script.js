@@ -12,6 +12,7 @@ $(document).ready(function() {
 
   socket.onmessage = function(evt) {
     var gameData = new GameData(JSON.parse(evt.data));
+    console.log(gameData)
     gameCanvas.draw(gameData);
   };
 });
