@@ -1,5 +1,6 @@
 (ns webreplay.communication
-  (use [org.httpkit.server :only [send!]]))
+  (use [org.httpkit.server :only [send!]]
+       [clojure.tools.logging :only [info debug]]))
 
 (def game-channels (atom {}))
 (def game-ids (atom {}))
@@ -7,8 +8,9 @@
 
 (defn- loop-while [loop-fn]
   (let [lh (fn lh [iteration]
+             (debug "loop iteration" iteration)
               (when (loop-fn iteration)
-                (println (str "loop-fn returned truthy on iteration " iteration))
+                (debug "loop-fn returned truthy on iteration" iteration)
                 (Thread/sleep 1000)
                 (future (lh (inc iteration)))
               nil))]
@@ -25,23 +27,18 @@
     (dummydata iteration)
     nil)) ; todo get replay from storage
 
-
 (defn- replay [channel game-id] 
-  (println (str "replaying game " game-id))
-  (loop-while (fn [iteration]
-                (println (str game-id " iteration " iteration))
-                (when-let [data (replay-iteration-data game-id iteration)]
-                  (do 
-                    (println "data ok")
-                    (send! channel data))))))
+  (info (str "replaying game " game-id))
+  (loop-while #(when-let [data (replay-iteration-data game-id %)]
+                 (send! channel data))))
 
 (defn unsubscribe [channel status]
   (let [game-id (get @game-ids channel)]
-    (swap! game-ids dissoc channel)))
+    (swap! game-ids dissoc channel)
+    (info channel "closed, status" status)))
 
 (defn subscribe [channel game-id]
   (let [id (keyword game-id)]
     (swap! game-ids assoc channel id)
     (replay channel game-id)))
-
 

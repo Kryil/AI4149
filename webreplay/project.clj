@@ -6,6 +6,7 @@
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [compojure "1.3.1"]
                  [ring/ring-defaults "0.1.2"]
+                 [org.clojure/tools.logging "0.3.1"]
                  [http-kit "2.1.18"]]
   :plugins [[lein-ring "0.8.13"]]
   :ring {:handler webreplay.handler/app}
