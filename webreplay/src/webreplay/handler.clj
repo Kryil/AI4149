@@ -11,8 +11,8 @@
 
 (defn websocket-handler [request]
   (with-channel request channel
-                (on-receive channel (partial comm/open channel))
-                (on-close channel (partial comm/close channel))))
+                (on-receive channel #(comm/subscribe channel (get (json/read-str %) "gameId")))
+                (on-close channel #(comm/unsubscribe channel %))))
 
 (defroutes app-routes
   (GET "/" []
