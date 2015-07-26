@@ -30,19 +30,23 @@
 
 ### Game Status (sent by the server)
 
-  - Positions of player units
+  - Player unit Status
+    - Position
+    - Current state
+      - moving to coordinates
+      - firing at coordinates
+      - gathering resources
+      - idle
+      - new (on the tick when the unit becomes ready, idle on next tick)
+  - Player building status
+    - building unit
+    - constructing a new building
+    - idle
+    - new (same as with units)
   - Things in the player field of vision
     - Walls
     - Resources
     - Enemy units
-  - List of commands currently being executed
-    - Move
-    - Fire
-    - Gather Resources
-    - Building in Progress
-  - List of completed buildings
-    - New building is ready
-    - New unit is ready
   - List of unprocessable commands?
     - Build site obstructed?
     - Not enough resources to build?
