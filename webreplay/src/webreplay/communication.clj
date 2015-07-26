@@ -17,14 +17,14 @@
     (future (lh 0)))
   nil)
 
-(defn- dummydata [i]
+(defn- load-scene [game-id i]
   (try
-    (slurp (str "resources/public/script/dummydata" i ".json"))
+    (slurp (str "resources/public/gamefields/" game-id i ".json"))
     (catch Exception e nil)))
 
 (defn- replay-iteration-data [game-id iteration]
-  (if (= game-id "dummygame")
-    (dummydata iteration)
+  (if (not (empty? game-id))
+    (load-scene game-id iteration)
     nil)) ; todo get replay from storage
 
 (defn- replay [channel game-id] 
