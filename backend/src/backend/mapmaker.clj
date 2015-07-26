@@ -45,5 +45,6 @@
 
 (defn gamefield-as-json
   "for debugging purposes"
-  []
-  (spit "/tmp/dummyfield.json" (json/write-str (empty-gamefield))))
+  [gamefield-name]
+  (spit (str "../webreplay/resources/public/gamefields/" gamefield-name ".json")
+        (json/write-str (empty-gamefield))))
