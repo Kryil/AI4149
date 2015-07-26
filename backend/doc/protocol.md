@@ -37,6 +37,7 @@
       - firing at coordinates
       - gathering resources
       - idle
+      - under construction
       - new (on the tick when the unit becomes ready, idle on next tick)
   - Player building status
     - building unit
@@ -81,3 +82,7 @@ buildings. The server will cache the commands and process them one by one.
 
  - Game Speed (i.e. how many milliseconds per tick)
  - Player and Opponent Factions (if we decide to implement more than one)
+
+### Player commands
+
+  - Select where the factory builds the new unit
