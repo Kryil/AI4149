@@ -10,33 +10,40 @@
 (defn- rand-gap [a b]
   (+ a (rand-int b)))
 
+(defn- rand-1-to-10 []
+  (* 10 (rand-gap 1 10)))
+
+(defn- new-rand [coord max-size]
+  (if (< coord max-size)
+    (+ coord (rand-1-to-10))
+    (- coord (rand-1-to-10))))
+
+(defn- rand-boolean []
+  (boolean (< 0.5 (rand))))
+
+(defn- conj-two-tenfold! [target x y]
+  (conj! (conj! target (* 10 x)) (* 10 y)))
+
 (defn- a-wall []
-  (loop [i 0
-         n (rand-gap 2 5)
+  (loop [n (rand-gap 2 5)
          points (transient [])
          x (rand-int 505)
          y (rand-int 353)
-         elector (boolean (< 0.5 (rand)))]
-    (if (= i n)
-      {:path (persistent! points) :type :Wall}
-      (let [new-x (if elector x (if (< x 225)
-                                  (+ x (* 10 (rand-gap 1 10)))
-                                  (- x (* 10 (rand-gap 1 10)))))
-            new-y (if elector (if (< y 175)
-                                (+ y (* 10 (rand-gap 1 10)))
-                                (- y (* 10 (rand-gap 1 10)))) y)]
-        (recur (inc i)
-               n
-               (conj! (conj! points (* 10 new-x)) (* 10 new-y))
+         elector (rand-boolean)]
+    (if (zero? n) {:path (persistent! points) :type :Wall}
+      (let [new-x (if elector x (new-rand x 225))
+            new-y (if elector (new-rand y 175) y)]
+        (recur (dec n)
+               (conj-two-tenfold! points new-x new-y)
                new-x
                new-y 
                (boolean (not elector)))))))
 
 (defn- obstacle-corners []
-  (loop [i 0 n (rand-gap 1 8) obstacles (transient [])]
-    (if (= i n)
+  (loop [n (rand-gap 1 8) obstacles (transient [])]
+    (if (zero? n)
       (persistent! obstacles)
-      (recur (inc i) n (conj! obstacles (a-wall))))))
+      (recur (dec n) (conj! obstacles (a-wall))))))
 
 (defn empty-gamefield []
   (swap! gamefield assoc :obstacles (obstacle-corners))
