@@ -59,6 +59,33 @@ takes one game tick and the bullet moves X distance in a tick. The bullet is a
 lot faster than any other unit but still not instant, so the player must try to
 analyze movement of the target in order to hit.
 
+## Game Play
+
+Game is turn based. Every turn takes a fixed amount of time when every 
+participating player has the opportunity to analyze the current state and plot
+the next moves for their units. The server then plays the turn for each player
+simultaneously. For example when a player is firing weapons to a tank that was
+stationary in the previous turn, it may not hit because the tank may have begun
+moving.
+
+### Scores
+
+The game score is always based on the player value, at least in two different
+ways:
+
+ 1. Sum of collected unspend resources and total build cost of all units in
+    the field (if the unit is destroyed, its value will be lost)
+ 2. Value of collected unspend resources
+
+The scoring model is announced in the game start.
+
+### Game End
+
+The game will end after a fixed number of turns or when either one of the
+commanders is destroyed. The winner will be the player who still has his
+commander alive or the one with higher score based on the scoring rules.
+
+
 [unitIndex]: unit_indexin.png
 [factoryBuilding1]: factory_building1.png
 [factoryBuilding2]: factory_building2.png
