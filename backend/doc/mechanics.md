@@ -32,7 +32,7 @@ complete.
 Lt. Commanders can harvest new resources and stop to process it to be used by
 factories. They can also build and repair buildings and repair units, just
 like the commander, but they can not act as a commander in the event the
-commander is destroyed.
+commander is destroyed. They do not have a weapon.
 
 Lt. Commanders can be built at unit factory. It will cost X resources and Y 
 ticks to complete.
