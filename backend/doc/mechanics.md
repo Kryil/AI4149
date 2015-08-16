@@ -11,8 +11,9 @@ Unit locations are indexed by their top left corner.
 Commander represents the player. The game is won when the opposing Commander
 is destroyed and lost when your Commander gets destroyed.
 
-Commander can build new buildings, harvest energy and has a weapon. Commander
-has heavier armor than other units, meaning it will take less damage from a hit.
+Commander can build and repair buildings and repair units, harvest resources 
+and has a weapon. Commander has heavier armor than other units, meaning it 
+will take less damage from a hit.
 
 Commander moves a bit slower than other units, X points per tick.
 
@@ -26,12 +27,15 @@ Tank speed is X points per tick.
 Tanks can be built at unit factory. It will cost X resources and Y ticks to
 complete.
 
-### Harvester
+### Harvester / Lieutenant Commander
 
-Harvester can harvest new energy and stop to process it to be used by factories.
+Lt. Commanders can harvest new resources and stop to process it to be used by
+factories. They can also build and repair buildings and repair units, just
+like the commander, but they can not act as a commander in the event the
+commander is destroyed.
 
-Harvesters can be built at unit factory. It will cost X resources and Y ticks to
-complete.
+Lt. Commanders can be built at unit factory. It will cost X resources and Y 
+ticks to complete.
 
 ## Buildings
 
