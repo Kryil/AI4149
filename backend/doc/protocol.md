@@ -69,6 +69,15 @@ Everything is a list, meaning player can instruct units to move in a path, fire
 to multiple different targets, build multiple units and construct multiple
 buildings. The server will cache the commands and process them one by one.
 
+### Ping (sent by the server and client)
+
+If the player has not sent anything in some amount of turns, the server will
+ask for a ping. The game is paused (see Error conditions) and the player is
+given some time to reply to the ping. If there is no reply, the game is
+terminated.
+
+The client must respond with a ping before the grace period is over.
+
 ### Game End (sent by the server)
 
   - You have won/lost
