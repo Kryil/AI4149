@@ -27,9 +27,13 @@
  - Building and unit field of vision (as in how far units see)
  - Unit moving speed, fire rate and bullet speed
  - Positions of player owned buildings and units
+ - Scoring rule (how is the score calculated, see [Mechanics](mechanics.md))
+ - Total number of turns in the game
 
 ### Game Status (sent by the server)
 
+  - Turn number
+  - Turns remaining
   - Player unit Status
     - Position
     - Current state
@@ -59,6 +63,7 @@
   - Build a new unit from given factory
   - Move unit to coordinates
   - Order unit to fire to given coordinates
+  - Gather resources with the unit at its current position
 
 Everything is a list, meaning player can instruct units to move in a path, fire
 to multiple different targets, build multiple units and construct multiple
