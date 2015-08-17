@@ -42,7 +42,7 @@
 
 
 
-(defn process-build-commands [commands state]
+(defn process-build-commands [state commands]
   (reduce process-build-command state commands))
 
 (defn increase-turn-counter [state]
@@ -55,7 +55,7 @@
 ;  (increase-turn-counter
 ;    (process-build-commands (filter (fn [cmd] (= (:action cmd) :build)) player-commands)
 ;                            state)))
-  (->>
+  (->
     state
     (process-build-commands (filter (fn [cmd] (= (:action cmd) :build)) player-commands))
     increase-turn-counter))
