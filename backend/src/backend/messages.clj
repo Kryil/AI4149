@@ -4,13 +4,16 @@
 
 (defrecord UnitState
   [id
+   type
    ^Coordinates position
    ^String action
    ^Coordinates action-coordinates])
 
 (defrecord BuildingState
   [id
-   ^String action])
+   type
+   ^String action
+   action-args])
 
 (defrecord Thing
   [id
@@ -20,12 +23,35 @@
 (defrecord GameState
   [^Integer turn
    ^Integer turns
+   resources
    ^"[Lbackend.messages.UnitState;" unit-states
    ^"[Lbackend.messages.BuildingState;" building-states
    ^"[Lbackend.messages.Thing;" things])
 
 (defrecord PlayerCommand
-  [target-id
+  [player
+   target-id
    action
    action-args])
+
+(defrecord PlayerState
+  [player
+   resources
+   ^"[Lbackend.messages.UnitState;" unit-states
+   ^"[Lbackend.messages.BuildingState;" building-states])
+
+(defrecord UnitRule
+  [name
+   type
+   speed
+   armor
+   cost])
+   
+
+(defrecord FullGameState
+  [^Integer turn
+   ^Integer turns
+   rules
+   ; todo map
+   ^"[Lbackend.messages.PlayerState;" player-states])
 

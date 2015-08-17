@@ -34,6 +34,7 @@
 
   - Turn number
   - Turns remaining
+  - Available resources
   - Player unit Status
     - Position
     - Current state
