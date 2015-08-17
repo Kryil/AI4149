@@ -38,7 +38,8 @@
   [player
    resources
    ^"[Lbackend.messages.UnitState;" unit-states
-   ^"[Lbackend.messages.BuildingState;" building-states])
+   ^"[Lbackend.messages.BuildingState;" building-states
+   errors])
 
 (defrecord UnitRule
   [name

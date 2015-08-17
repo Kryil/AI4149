@@ -61,7 +61,24 @@
     (fact "player resources were substracted"
       (:resources p-state) => 1500)
     (fact "build command does not mess up the state"
-      (count (:player-states updated-state)) => 2)))
+      (count (:player-states updated-state)) => 2
+      (map :player (:player-states updated-state)) => ["player-1" "player-2"]))
+  (let [command #backend.messages.PlayerCommand["player-1" "p1-b1" :build :harvester]
+        reduced-resources-state (update-in test-state [:player-states] (fn [l] (map (fn [ps] (assoc ps :resources 300)) l)))
+        updated-state (game/process-turn reduced-resources-state [command])
+        p-state (game/find-player-state "player-1" updated-state)]
+    (fact "factories can build harvesters"
+      (let [b-state (game/find-building-state "p1-b1" p-state)]
+        (:action b-state) => :idle
+        (:action-args b-state) => nil))
+    (fact "player resources were not substracted"
+      (:resources p-state) => 300)
+    (fact "player-state has unable to comply notification"
+      (count (:errors p-state)) => 1
+      (second (first (:errors p-state))) => :no-resources)
+    (fact "build command does not mess up the state"
+      (count (:player-states updated-state)) => 2
+      (map :player (:player-states updated-state)) => ["player-1" "player-2"])))
   ;(fact "units are moved")
 
 

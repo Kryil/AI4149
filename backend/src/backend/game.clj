@@ -33,11 +33,15 @@
         up-b-state (assoc (assoc b-state :action :constructing) :action-args args)
         up-p-state (assoc up-p-state :building-states 
                           (cons up-b-state 
-                                (filter (fn [bs] (not (:id bs) building-id)) (:building-states up-p-state))))
-        up-state (assoc state :player-states 
-                        (cons up-p-state 
-                              (filter (fn [ps] (= (:player ps) player)) (:player-states state))))]
-    up-state))
+                                (filter (fn [bs] (not (:id bs) building-id)) (:building-states up-p-state))))]
+    (assoc state :player-states 
+           (cons (cond
+                   (< (:resources up-p-state) 0) (assoc p-state 
+                                                        :errors 
+                                                        (cons [command :no-resources] 
+                                                              (:errors p-state)))
+                   :else up-p-state)
+                 (filter (fn [ps] (not= (:player ps) player)) (:player-states state))))))
 
 
 
@@ -52,9 +56,6 @@
 (defn process-turn 
   "Apply all player actions into given state and return updated state."
   [state player-commands]
-;  (increase-turn-counter
-;    (process-build-commands (filter (fn [cmd] (= (:action cmd) :build)) player-commands)
-;                            state)))
   (->
     state
     (process-build-commands (filter (fn [cmd] (= (:action cmd) :build)) player-commands))
