@@ -22,7 +22,7 @@
   (:cost (find-unit-rule unit-type rules)))
 
 
-(defn process-build-command [command state]
+(defn process-build-command [state command]
   (let [player (:player command)
         building-id (:target-id command)
         action (:action command)
@@ -43,10 +43,7 @@
 
 
 (defn process-build-commands [commands state]
-  (reduce (fn [state cmd]
-            (process-build-command cmd state))
-          state
-          commands))
+  (reduce process-build-command state commands))
 
 (defn increase-turn-counter [state]
   (update-in state [:turn] inc))
