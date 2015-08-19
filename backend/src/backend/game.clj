@@ -46,6 +46,10 @@
                                            :errors 
                                            (cons [command :can-not-build] 
                                                  (:errors p-state)))
+                   (not= (:action b-state) :idle) (assoc p-state 
+                                                         :errors 
+                                                         (cons [command :building-in-progress] 
+                                                               (:errors p-state)))
                    :else up-p-state)
                  (filter (fn [ps] (not= (:player ps) player)) (:player-states state))))))
 

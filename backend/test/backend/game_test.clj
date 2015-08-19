@@ -18,7 +18,13 @@
             :type :harvester
             :speed 10
             :armor 1
-            :cost 500}]
+            :cost 500}
+           #backend.messages.UnitRule
+           {:name "Tank"
+            :type :tank
+            :speed 10
+            :armor 1
+            :cost 100}]
    :player-states
    [#backend.messages.PlayerState
     {:player "player-1"
@@ -106,5 +112,34 @@
     (fact "player-state has unable to comply notification"
       (count (:errors p-state)) => 1
       (second (first (:errors p-state))) => :can-not-build)))
+
+
+(facts "can not start a new build when another is in progress"
+  (let [command #backend.messages.PlayerCommand["player-1" "p1-b1" :build :harvester]
+        updated-state (game/process-turn test-state [command])
+        p-state (game/find-player-state "player-1" updated-state)]
+
+    (fact "first build started"
+      (let [b-state (game/find-building-state "p1-b1" p-state)]
+        (:action b-state) => :constructing
+        (:action-args b-state) => :harvester))
+
+    (fact "player resources were substracted"
+      (:resources p-state) => 1500)
+    
+    (let [tank-command #backend.messages.PlayerCommand["player-1" "p1-b1" :build :tank]
+          tank-state (game/process-turn updated-state [tank-command])
+          p-state (game/find-player-state "player-1" tank-state)
+          b-state (game/find-building-state "p1-b1" p-state)]
+      (fact "attempting a build again does not alter factory status"
+          (:action b-state) => :constructing
+          (:action-args b-state) => :harvester)
+
+      (fact "player resources were not substracted"
+        (:resources p-state) => 1500)
+
+      (fact "second build has an error message"
+        (count (:errors p-state)) => 1
+        (second (first (:errors p-state))) => :building-in-progress))))
 
 
