@@ -28,7 +28,9 @@
         action (:action command)
         args (:action-args command)
         p-state (find-player-state player state)
-        up-p-state (update-in p-state [:resources] (fn [r] (- r (find-unit-cost args (:rules state)))))
+        unit-cost (find-unit-cost args (:rules state))
+        resources-left (if (nil? unit-cost) 0 (- (:resources p-state) unit-cost))
+        up-p-state (assoc p-state :resources resources-left)
         b-state (find-building-state building-id up-p-state)
         up-b-state (assoc (assoc b-state :action :constructing) :action-args args)
         up-p-state (assoc up-p-state :building-states 
@@ -40,6 +42,10 @@
                                                         :errors 
                                                         (cons [command :no-resources] 
                                                               (:errors p-state)))
+                   (nil? unit-cost) (assoc p-state 
+                                           :errors 
+                                           (cons [command :can-not-build] 
+                                                 (:errors p-state)))
                    :else up-p-state)
                  (filter (fn [ps] (not= (:player ps) player)) (:player-states state))))))
 

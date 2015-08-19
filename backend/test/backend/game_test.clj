@@ -90,4 +90,21 @@
       (count (:player-states updated-state)) => 2
       (map :player (:player-states updated-state)) => ["player-1" "player-2"])))
 
+(facts "can not build units without cost"
+  (let [command #backend.messages.PlayerCommand["player-1" "p1-b1" :build :commander]
+        updated-state (game/process-turn test-state [command])
+        p-state (game/find-player-state "player-1" updated-state)]
+
+    (fact "building did not start"
+      (let [b-state (game/find-building-state "p1-b1" p-state)]
+        (:action b-state) => :idle
+        (:action-args b-state) => nil))
+
+    (fact "player resources were not substracted"
+      (:resources p-state) => 2000)
+
+    (fact "player-state has unable to comply notification"
+      (count (:errors p-state)) => 1
+      (second (first (:errors p-state))) => :can-not-build)))
+
 
