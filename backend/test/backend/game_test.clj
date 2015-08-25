@@ -75,7 +75,13 @@
 
     (fact "build command does not mess up the state"
       (count (:player-states updated-state)) => 2
-      (map :player (:player-states updated-state)) => ["player-1" "player-2"])))
+      (map :player (:player-states updated-state)) => ["player-1" "player-2"])
+    (fact "processing a turn decreases remaining build time"
+      (let [updated-state (game/process-turn updated-state [])
+            p-state (game/find-player-state "player-1" updated-state)
+            b-state (game/find-building-state "p1-b1" p-state)]
+        (:action b-state) => :constructing
+        (:action-args b-state) => [:harvester 9]))))
 
 (facts "can not build if not enough resources"
   (let [command #backend.messages.PlayerCommand["player-1" "p1-b1" :build :harvester]
@@ -136,7 +142,7 @@
           b-state (game/find-building-state "p1-b1" p-state)]
       (fact "attempting a build again does not alter factory status"
           (:action b-state) => :constructing
-          (:action-args b-state) => [:harvester 10])
+          (:action-args b-state) => [:harvester 9])
 
       (fact "player resources were not substracted"
         (:resources p-state) => 1500)

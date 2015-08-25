@@ -21,6 +21,27 @@
   [unit-type rules]
   (:cost (find-unit-rule unit-type rules)))
 
+(defn map-player-states 
+  "Apply a function to every player state and return updated state"
+  [f state]
+  (assoc state :player-states (map f (:player-states state))))
+
+(defn map-player-building-states 
+  "Apply a function to every building state in given player state and return updated player state"
+  [f player-state]
+  (assoc player-state :building-states (map f (:building-states player-state))))
+
+
+(defn process-factory [building-state]
+  (if (= (:action building-state) :constructing)
+    (update-in building-state [:action-args 1] dec)
+    building-state))
+
+(defn process-player-factories [player-state]
+  (map-player-building-states process-factory player-state))
+
+(defn process-factories [state]
+  (map-player-states process-player-factories state))
 
 (defn process-build-command [state command]
   (let [player (:player command)
@@ -70,5 +91,6 @@
   [state player-commands]
   (->
     state
+    (process-factories)
     (process-build-commands (filter (fn [cmd] (= (:action cmd) :build)) player-commands))
     increase-turn-counter))
