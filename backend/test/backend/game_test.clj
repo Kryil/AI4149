@@ -12,19 +12,22 @@
             :type :commander
             :speed 5
             :armor 10
-            :cost nil}
+            :cost nil
+            :build-time nil}
            #backend.messages.UnitRule
            {:name "Lt. Commander"
             :type :harvester
             :speed 10
             :armor 1
-            :cost 500}
+            :cost 500
+            :build-time 10}
            #backend.messages.UnitRule
            {:name "Tank"
             :type :tank
             :speed 10
             :armor 1
-            :cost 100}]
+            :cost 100
+            :build-time 5}]
    :player-states
    [#backend.messages.PlayerState
     {:player "player-1"
@@ -65,7 +68,7 @@
     (fact "factories can build harvesters"
       (let [b-state (game/find-building-state "p1-b1" p-state)]
         (:action b-state) => :constructing
-        (:action-args b-state) => :harvester))
+        (:action-args b-state) => [:harvester 10]))
 
     (fact "player resources were substracted"
       (:resources p-state) => 1500)
@@ -122,7 +125,7 @@
     (fact "first build started"
       (let [b-state (game/find-building-state "p1-b1" p-state)]
         (:action b-state) => :constructing
-        (:action-args b-state) => :harvester))
+        (:action-args b-state) => [:harvester 10]))
 
     (fact "player resources were substracted"
       (:resources p-state) => 1500)
@@ -133,7 +136,7 @@
           b-state (game/find-building-state "p1-b1" p-state)]
       (fact "attempting a build again does not alter factory status"
           (:action b-state) => :constructing
-          (:action-args b-state) => :harvester)
+          (:action-args b-state) => [:harvester 10])
 
       (fact "player resources were not substracted"
         (:resources p-state) => 1500)

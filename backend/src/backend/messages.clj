@@ -46,7 +46,8 @@
    type
    speed
    armor
-   cost])
+   cost
+   build-time])
    
 
 (defrecord FullGameState

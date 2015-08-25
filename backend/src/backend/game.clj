@@ -26,13 +26,15 @@
   (let [player (:player command)
         building-id (:target-id command)
         action (:action command)
-        args (:action-args command)
+        unit-type (:action-args command)
         p-state (find-player-state player state)
-        unit-cost (find-unit-cost args (:rules state))
+        unit-rule (find-unit-rule unit-type (:rules state))
+        unit-cost (:cost unit-rule)
+        unit-build-time (:build-time unit-rule)
         resources-left (if (nil? unit-cost) 0 (- (:resources p-state) unit-cost))
         up-p-state (assoc p-state :resources resources-left)
         b-state (find-building-state building-id up-p-state)
-        up-b-state (assoc (assoc b-state :action :constructing) :action-args args)
+        up-b-state (assoc (assoc b-state :action :constructing) :action-args [unit-type unit-build-time])
         up-p-state (assoc up-p-state :building-states 
                           (cons up-b-state 
                                 (filter (fn [bs] (not (:id bs) building-id)) (:building-states up-p-state))))]
