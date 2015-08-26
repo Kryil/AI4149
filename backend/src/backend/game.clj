@@ -1,5 +1,6 @@
 (ns backend.game
-  (:require [backend.messages :as msgs]))
+  (:use [backend.messages])
+  (:import [backend.messages Coordinates]))
 
 (defn find-player-state 
   "Search a PlayerState record from game state by player name"
@@ -34,11 +35,34 @@
 
 (defn process-factory [building-state]
   (if (= (:action building-state) :constructing)
-    (update-in building-state [:action-args 1] dec)
-    building-state))
+    (let [up-state (update-in building-state [:action-args 1] dec)]
+      (if (<= (second (:action-args up-state)) 0)
+        [(assoc (assoc up-state :action-args nil) :action :idle) (first (:action-args up-state))]
+        [up-state nil]))
+    [building-state nil]))
 
 (defn process-player-factories [player-state]
-  (map-player-building-states process-factory player-state))
+  (let [b-states (:building-states player-state)
+        units (:unit-states player-state)
+        updated-b-states (map process-factory b-states)
+        updated-state (assoc player-state :building-states (map first updated-b-states))
+        updated-state (assoc updated-state 
+                             :unit-states 
+                             (apply conj 
+                                    units
+                                    (filter (complement nil?)
+                                            (map (fn [[_ u-type]]
+                                                   (when-not (nil? u-type)
+                                                     (map->UnitState {:id "todo"
+                                                                      :type u-type
+                                                                      :position #backend.messages.Coordinates[0 0]
+                                                                      :action :new
+                                                                      :action-args nil})))
+                                                 updated-b-states))))]
+    updated-state))
+
+
+
 
 (defn process-factories [state]
   (map-player-states process-player-factories state))
@@ -58,7 +82,7 @@
         up-b-state (assoc (assoc b-state :action :constructing) :action-args [unit-type unit-build-time])
         up-p-state (assoc up-p-state :building-states 
                           (cons up-b-state 
-                                (filter (fn [bs] (not (:id bs) building-id)) (:building-states up-p-state))))]
+                                (filter (fn [bs] (not= (:id bs) building-id)) (:building-states up-p-state))))]
     (assoc state :player-states 
            (cons (cond
                    (< (:resources up-p-state) 0) (assoc p-state 
