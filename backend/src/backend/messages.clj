@@ -6,7 +6,7 @@
   [id
    type
    ^Coordinates position
-   ^String action
+   action
    ^Coordinates action-coordinates])
 
 (defrecord BuildingState

@@ -32,6 +32,18 @@
   [f player-state]
   (assoc player-state :building-states (map f (:building-states player-state))))
 
+(defn map-player-unit-states 
+  "Apply a function to every units state in given player state and return updated player state"
+  [f player-state]
+  (assoc player-state :unit-states (map f (:unit-states player-state))))
+
+
+(defmacro on-action 
+  "Tests if :action matches in given state. If true, evaluates and returns then expr,
+  otherwise else expr, if supplied, else a-state."
+  ([a-state action then] `(on-action ~a-state ~action ~then ~a-state))
+  ([a-state action then else] `(if (= (:action ~a-state) ~action) ~then ~else)))
+
 
 (defn process-factory [building-state]
   (if (= (:action building-state) :constructing)
@@ -62,10 +74,19 @@
     updated-state))
 
 
+(defn process-player-units [player-state]
+  (map-player-unit-states 
+    (fn [unit-state] 
+      (on-action unit-state :new (assoc unit-state :action :idle)))
+      player-state))
+
 
 
 (defn process-factories [state]
   (map-player-states process-player-factories state))
+
+(defn process-units [state]
+  (map-player-states process-player-units state))
 
 (defn process-build-command [state command]
   (let [player (:player command)
@@ -115,6 +136,7 @@
   [state player-commands]
   (->
     state
+    (process-units)
     (process-factories)
     (process-build-commands (filter (fn [cmd] (= (:action cmd) :build)) player-commands))
     increase-turn-counter))
