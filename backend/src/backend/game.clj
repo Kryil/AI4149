@@ -22,20 +22,25 @@
   [unit-type rules]
   (:cost (find-unit-rule unit-type rules)))
 
+(defn map-state 
+  "Apply function f to each item in state selected by k."
+  [f state k]
+  (assoc state k (map f (k state))))
+
 (defn map-player-states 
   "Apply a function to every player state and return updated state"
   [f state]
-  (assoc state :player-states (map f (:player-states state))))
+  (map-state f state :player-states))
 
 (defn map-player-building-states 
   "Apply a function to every building state in given player state and return updated player state"
   [f player-state]
-  (assoc player-state :building-states (map f (:building-states player-state))))
+  (map-state f player-state :building-states))
 
 (defn map-player-unit-states 
   "Apply a function to every units state in given player state and return updated player state"
   [f player-state]
-  (assoc player-state :unit-states (map f (:unit-states player-state))))
+  (map-state f player-state :unit-states))
 
 
 (defmacro on-action 
@@ -76,8 +81,7 @@
 
 (defn process-player-units [player-state]
   (map-player-unit-states 
-    (fn [unit-state] 
-      (on-action unit-state :new (assoc unit-state :action :idle)))
+      #(on-action % :new (assoc % :action :idle))
       player-state))
 
 
