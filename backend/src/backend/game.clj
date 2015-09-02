@@ -15,21 +15,20 @@
   (let [b-states (:building-states player-state)
         units (:unit-states player-state)
         updated-b-states (map process-factory b-states)
-        updated-state (assoc player-state :building-states (map first updated-b-states))
-        updated-state (assoc updated-state 
-                             :unit-states 
-                             (apply conj 
-                                    units
-                                    (filter (complement nil?)
-                                            (map (fn [[_ u-type]]
-                                                   (when-not (nil? u-type)
-                                                     (map->UnitState {:id "todo"
-                                                                      :type u-type
-                                                                      :position #backend.messages.Coordinates[0 0]
-                                                                      :action :new
-                                                                      :action-args nil})))
-                                                 updated-b-states))))]
-    updated-state))
+        updated-state (assoc player-state :building-states (map first updated-b-states))]
+    (assoc updated-state 
+           :unit-states 
+           (apply conj 
+                  units
+                  (filter (complement nil?)
+                          (map (fn [[_ u-type]]
+                                 (when-not (nil? u-type)
+                                   (map->UnitState {:id "todo"
+                                                    :type u-type
+                                                    :position #backend.messages.Coordinates[0 0]
+                                                    :action :new
+                                                    :action-args nil})))
+                               updated-b-states))))))
 
 
 (defn process-player-units [player-state]
