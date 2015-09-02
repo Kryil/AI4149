@@ -31,25 +31,26 @@
         (:action b-state) => :constructing
         (:action-args b-state) => [:harvester 9]))
 
-    (let [final-state (reduce (fn [state n] (game/process-turn state [])) updated-state (range 10))
-          p-state (game/find-player-state "player-1" final-state)
-          b-state (game/find-building-state "p1-b1" p-state)]
+    (let [completed-state (reduce (fn [state n] (game/process-turn state [])) updated-state (range 10))
+          p-state (game/find-player-state "player-1" completed-state)
+          b-state (game/find-building-state "p1-b1" p-state)
+          new-unit (some #(when (= (:action %) :new) %) (:unit-states p-state))]
       (fact "unit is placed on player units when completed"
         (:action b-state) => :idle
           (:action-args b-state) => nil)
       (fact "new state is changed to idle on next turn"
-        (let [next-state (game/process-turn final-state [])
+        (let [next-state (game/process-turn completed-state [])
               next-p-state (game/find-player-state "player-1" next-state)
-              new-unit (some #(when (= (:action %) :new) %) (:unit-states p-state))
               next-new-unit (some #(when (= (:action %) :new) %) (:unit-states next-p-state))
               same-id-unit (some #(when (= (:id %) (:id new-unit)) %) (:unit-states next-p-state))]
           new-unit =not=> nil
           next-new-unit => nil
           same-id-unit =not=> nil
           (:action same-id-unit) => :idle))
-      ; todo unit is placed next to factory
+      ; todo unit is placed next to factory"
       ; todo units can not be placed on top of each other
       ; todo unit can only be placed to a vacant spot next to a building - otherwise halt factory
+      ; todo unit should be on the list immediately when construction starts
       )))
 
 
