@@ -5,7 +5,8 @@
             [backend.game-test-data :refer [simple-test-state]]))
 
 (fact "turn counter is increased"
-  (:turn (game/process-turn simple-test-state [])) => 1)
+  (:turn (game/process-turn simple-test-state [])) => 1
+  (:turn (reduce (fn [state n] (game/process-turn state [])) simple-test-state (range 3))) => 3)
 
 (facts "building a harvester"
   (let [command #backend.messages.PlayerCommand["player-1" "p1-b1" :build :harvester]
