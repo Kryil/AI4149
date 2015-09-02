@@ -47,7 +47,9 @@
    speed
    armor
    cost
-   build-time])
+   build-time
+   built-by
+   shape])
    
 
 (defrecord FullGameState

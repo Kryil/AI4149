@@ -110,18 +110,21 @@
                                 (filter (fn [bs] (not= (:id bs) building-id)) (:building-states up-p-state))))]
     (assoc state :player-states 
            (cons (cond
-                   (< (:resources up-p-state) 0) (assoc p-state 
-                                                        :errors 
-                                                        (cons [command :no-resources] 
-                                                              (:errors p-state)))
-                   (nil? unit-cost) (assoc p-state 
-                                           :errors 
-                                           (cons [command :can-not-build] 
-                                                 (:errors p-state)))
+                   (or (nil? (:built-by unit-rule)) 
+                       (nil? unit-cost)
+                       (not= (:type b-state) (:built-by unit-rule)))
+                     (assoc p-state
+                            :errors
+                            (cons [command :can-not-build]
+                                  (:errors p-state)))
                    (not= (:action b-state) :idle) (assoc p-state 
                                                          :errors 
                                                          (cons [command :building-in-progress] 
                                                                (:errors p-state)))
+                   (< (:resources up-p-state) 0) (assoc p-state 
+                                                        :errors 
+                                                        (cons [command :no-resources] 
+                                                              (:errors p-state)))
                    :else up-p-state)
                  (filter (fn [ps] (not= (:player ps) player)) (:player-states state))))))
 

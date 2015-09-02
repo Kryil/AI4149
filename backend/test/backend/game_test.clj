@@ -97,6 +97,40 @@
       (count (:errors p-state)) => 1
       (second (first (:errors p-state))) => :can-not-build)))
 
+(facts "can not build units from wrong builder"
+  (let [command #backend.messages.PlayerCommand["player-1" "p1-b1" :build :factory]
+        updated-state (game/process-turn simple-test-state [command])
+        p-state (game/find-player-state "player-1" updated-state)]
+
+    (fact "building did not start"
+      (let [b-state (game/find-building-state "p1-b1" p-state)]
+        (:action b-state) => :idle
+        (:action-args b-state) => nil))
+
+    (fact "player resources were not substracted"
+      (:resources p-state) => 2000)
+
+    (fact "player-state has unable to comply notification"
+      (count (:errors p-state)) => 1
+      (second (first (:errors p-state))) => :can-not-build)))
+
+(facts "can not build units without built-by"
+  (let [command #backend.messages.PlayerCommand["player-1" "p1-b1" :build :commander]
+        updated-state (game/process-turn simple-test-state [command])
+        p-state (game/find-player-state "player-1" updated-state)]
+
+    (fact "building did not start"
+      (let [b-state (game/find-building-state "p1-b1" p-state)]
+        (:action b-state) => :idle
+        (:action-args b-state) => nil))
+
+    (fact "player resources were not substracted"
+      (:resources p-state) => 2000)
+
+    (fact "player-state has unable to comply notification"
+      (count (:errors p-state)) => 1
+      (second (first (:errors p-state))) => :can-not-build)))
+
 
 (facts "can not start a new build when another is in progress"
   (let [command #backend.messages.PlayerCommand["player-1" "p1-b1" :build :harvester]

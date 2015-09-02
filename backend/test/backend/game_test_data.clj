@@ -13,21 +13,32 @@
             :speed 5
             :armor 10
             :cost nil
-            :build-time nil}
+            :build-time nil
+            :built-by nil}
            #backend.messages.UnitRule
            {:name "Lt. Commander"
             :type :harvester
             :speed 10
             :armor 1
             :cost 500
-            :build-time 10}
+            :build-time 10
+            :built-by :factory}
            #backend.messages.UnitRule
            {:name "Tank"
             :type :tank
             :speed 10
             :armor 1
             :cost 100
-            :build-time 5}]
+            :build-time 5
+            :built-by :factory}
+           #backend.messages.UnitRule
+           {:name "Factory"
+            :type :factory
+            :speed 0
+            :armor 10
+            :cost 2000
+            :build-time 5
+            :built-by :commander}]
    :player-states
    [#backend.messages.PlayerState
     {:player "player-1"
