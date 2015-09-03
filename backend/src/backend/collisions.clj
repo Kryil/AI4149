@@ -30,6 +30,16 @@
     [(- (first max-point) (first min-point) -1)
      (- (second max-point) (second min-point) -1)]))
 
+(defn get-unit-coordinates [area unit-rule]
+  (let [unit-shape (:shape unit-rule)
+        sorted-area (sort area)
+        sorted-shape (sort unit-shape)
+        min-point (first sorted-area)
+        min-shape-point (first sorted-shape)]
+    (Coordinates. (- (first min-point) (first min-shape-point))
+                  (- (second min-point) (second min-shape-point)))))
+
+
 (defn scale-area 
   "Scales area r amount. Currently supports only rectangles."
   [area r]
@@ -60,25 +70,26 @@
         items-in-x (quot max-x width)
         items-in-y (quot max-y height)]
             ; top row
-    (concat (mapv (fn [n] (make-rect [(+ min-x (* width n))
-                                      min-y] 
-                                     [width height])) 
-                  (range items-in-x))
-            ; right column
-            (mapv (fn [n] (make-rect [(inc (first top-right))
-                                      (+ min-y (* height n))] 
-                                     [width height])) 
-                  (range 1 items-in-y))
-            ; bottom row
-            (mapv (fn [n] (make-rect [(+ min-x (* width n))
-                                      (inc (second bottom-left))]
-                                     [width height])) 
-                  (range (- items-in-x 2) 0 -1))
-            ; left column
-            (mapv (fn [n] (make-rect [min-x 
-                                      (+ min-y (* height n))]
-                                     [width height])) 
-                  (range (dec items-in-y) 0 -1)))
+    (filter (fn [a] (not-any? neg? (flatten a)))
+            (concat (mapv (fn [n] (make-rect [(+ min-x (* width n))
+                                              min-y] 
+                                             [width height])) 
+                          (range items-in-x))
+                    ; right column
+                    (mapv (fn [n] (make-rect [(inc (first top-right))
+                                              (+ min-y (* height n))] 
+                                             [width height])) 
+                          (range 1 items-in-y))
+                    ; bottom row
+                    (mapv (fn [n] (make-rect [(+ min-x (* width n))
+                                              (inc (second bottom-left))]
+                                             [width height])) 
+                          (range (- items-in-x 2) 0 -1))
+                    ; left column
+                    (mapv (fn [n] (make-rect [min-x 
+                                              (+ min-y (* height n))]
+                                             [width height])) 
+                          (range (dec items-in-y) 0 -1))))
     ))
 
 (defn point-intersects? 

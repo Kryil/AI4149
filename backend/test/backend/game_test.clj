@@ -50,7 +50,17 @@
           next-new-unit => nil
           same-id-unit =not=> nil
           (:action same-id-unit) => :idle))
-      ; todo unit is placed next to factory"
+      (fact "unit is placed next to factory"
+        (let [unit-area (collisions/get-unit-area new-unit (:rules completed-state))
+              factory-area (collisions/get-unit-area b-state (:rules completed-state))]
+          (collisions/area-intersects? factory-area unit-area) => falsey
+          (collisions/area-intersects? (collisions/scale-area factory-area 1) unit-area) => truthy))
+      (fact "unit is inside map"
+        (let [unit-area (collisions/get-unit-area new-unit (:rules completed-state))]
+          (every? #(>= % 0) (flatten unit-area)) => true
+          ; todo check that coords are smaller than map width & height
+          ))
+
       ; todo units can not be placed on top of each other
       ; todo unit can only be placed to a vacant spot next to a building - otherwise halt factory
       ; todo unit should be on the list immediately when construction starts

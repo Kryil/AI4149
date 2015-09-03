@@ -1,5 +1,7 @@
 (ns backend.game
-  (:use [backend.messages] [backend.helpers])
+  (:require [backend.messages :refer :all] 
+            [backend.helpers :refer :all] 
+            [backend.collisions :refer :all])
   (:import [backend.messages Coordinates]))
 
 
@@ -11,7 +13,7 @@
         [up-state nil]))
     [building-state nil]))
 
-(defn process-player-factories [player-state]
+(defn process-player-factories [state player-state]
   (let [b-states (:building-states player-state)
         units (:unit-states player-state)
         updated-b-states (map process-factory b-states)
@@ -21,13 +23,19 @@
            (apply conj 
                   units
                   (filter (complement nil?)
-                          (map (fn [[_ u-type]]
+                          (map (fn [[b-state u-type]]
                                  (when-not (nil? u-type)
-                                   (map->UnitState {:id "todo"
-                                                    :type u-type
-                                                    :position #backend.messages.Coordinates[0 0]
-                                                    :action :new
-                                                    :action-args nil})))
+                                   (let [unit-rule (find-unit-rule u-type (:rules state))
+                                         factory-area (get-unit-area b-state (:rules state))
+                                         unit-size (get-unit-size {:type u-type} (:rules state))
+                                         unit-place (first (filter (partial area-free? state) 
+                                                                   (bordering-areas factory-area unit-size)))
+                                         unit-coords (get-unit-coordinates unit-place unit-rule)]
+                                     (map->UnitState {:id "todo"
+                                                      :type u-type
+                                                      :position unit-coords
+                                                      :action :new
+                                                      :action-args nil}))))
                                updated-b-states))))))
 
 
@@ -39,7 +47,7 @@
 
 
 (defn process-factories [state]
-  (map-player-states process-player-factories state))
+  (map-player-states (partial process-player-factories state) state))
 
 (defn process-units [state]
   (map-player-states process-player-units state))
