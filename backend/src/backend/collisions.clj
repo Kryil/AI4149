@@ -3,6 +3,9 @@
         [backend.helpers])
   (:import [backend.messages Coordinates]))
 
+(defn avg [coll]
+  (/ (apply + coll) (count coll)))
+
 (defn shape->area [shape origo]
   (mapv (fn [[x y]] [(+ (:x origo) x) (+ (:y origo) y)]) shape))
 
@@ -10,6 +13,14 @@
   (let [unit-rule (find-unit-rule (:type unit) unit-rules)]
     (shape->area (:shape unit-rule) (:position unit))))
 
+(defn scale-area 
+  "Scales area r amount. Currently supports only rectangles."
+  [area r]
+  (let [avg-x (avg (map first area))
+        avg-y (avg (map second area))]
+    (mapv (fn [[x y]] [(+ x (if (< x avg-x) (* -1 r) r))
+                       (+ y (if (< y avg-y) (* -1 r) r))])
+          area)))
 
 (defn point-intersects? 
   "Tests is the point inside area. Currently supports only rectangular
@@ -45,3 +56,18 @@
         (point-intersects? sorted-area-a max-point-b)
         (point-intersects? sorted-area-b min-point-a)
         (point-intersects? sorted-area-b max-point-a))))
+
+(defn all-areas [state]
+  (let [rules (:rules state)
+        player-states (:player-states state)
+        units (apply concat (map :unit-states player-states))
+        buildings (apply concat (map :building-states player-states))]
+    (concat (map #(get-unit-area % rules) units) 
+            (map #(get-unit-area % rules) buildings))))
+   
+
+(defn area-free? [state area]
+  (let [areas (all-areas state)]
+    (not-any? (partial area-intersects? area) areas)))
+
+

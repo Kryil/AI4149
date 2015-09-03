@@ -2,13 +2,30 @@
   (:require [midje.sweet :refer :all]
             [backend.messages :refer :all]
             [backend.game :as game]
-            [backend.collisions :as collisions]))
+            [backend.collisions :as collisions]
+            [backend.game-test-data :refer [simple-test-state]]))
 
 (facts "shape conversion"
   (let [origo #backend.messages.Coordinates[50 50]
         rectangle-shape [[10 -5] [10 5] [-10 5] [-10 -5]]]
     (fact "coordinates and shape is converted to area"
       (collisions/shape->area rectangle-shape origo) => [[60 45] [60 55] [40 55] [40 45]])))
+
+(facts "area scaling"
+  (let [area [[60 45] [60 55] [40 55] [40 45]]]
+    (fact "area expands"
+      (collisions/scale-area area 1) => [[61 44] [61 56] [39 56] [39 44]])
+    (fact "area shrinks"
+      (collisions/scale-area area -1) => [[59 46] [59 54] [41 54] [41 46]])))
+
+(facts "area free"
+  (let [free-area [[40 40] [40 50] [50 50] [50 40]]
+        occupied-area [[10 20] [10 42] [32 42] [32 20]]]
+    (fact "free area is detected"
+      (collisions/area-free? simple-test-state free-area) => truthy)
+    (fact "occupied area is detected"
+      (collisions/area-free? simple-test-state occupied-area) => falsey)))
+
 
 (facts "coord intersects"
   (fact "coordinates intersect with object"

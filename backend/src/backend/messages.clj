@@ -12,6 +12,7 @@
 (defrecord BuildingState
   [id
    type
+   ^Coordinates position
    ^String action
    action-args])
 
