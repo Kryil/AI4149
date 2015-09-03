@@ -40,6 +40,7 @@
   [f player-state]
   (map-state f player-state :unit-states))
 
+(defn uuid [] (str (java.util.UUID/randomUUID)))
 
 (defmacro on-action 
   "Tests if :action matches in given state. If true, evaluates and returns then expr,

@@ -31,7 +31,7 @@
                                          unit-place (first (filter (partial area-free? state) 
                                                                    (bordering-areas factory-area unit-size)))
                                          unit-coords (get-unit-coordinates unit-place unit-rule)]
-                                     (map->UnitState {:id "todo"
+                                     (map->UnitState {:id (uuid)
                                                       :type u-type
                                                       :position unit-coords
                                                       :action :new
