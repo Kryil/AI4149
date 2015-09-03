@@ -13,6 +13,23 @@
   (let [unit-rule (find-unit-rule (:type unit) unit-rules)]
     (shape->area (:shape unit-rule) (:position unit))))
 
+(defn get-normalized-unit-shape [unit unit-rules]
+  (let [unit-shape (:shape (find-unit-rule (:type unit) unit-rules))
+        sorted-shape (sort unit-shape)
+        min-point (first sorted-shape)
+        normalize-factor-x (if (neg? (first min-point)) (- (first min-point)) 0)
+        normalize-factor-y (if (neg? (second min-point)) (- (second min-point)) 0)]
+    (mapv (fn [[x y]] [(+ x normalize-factor-x)
+                       (+ y normalize-factor-y)])
+          sorted-shape)))
+
+(defn get-unit-size [unit unit-rules]
+  (let [shape (get-normalized-unit-shape unit unit-rules)
+        min-point (first shape)
+        max-point (last shape)]
+    [(- (first max-point) (first min-point))
+     (- (second max-point) (second min-point))]))
+
 (defn scale-area 
   "Scales area r amount. Currently supports only rectangles."
   [area r]

@@ -26,6 +26,14 @@
     (fact "occupied area is detected"
       (collisions/area-free? simple-test-state occupied-area) => falsey)))
 
+(fact "unit shape normalization"
+  (collisions/get-normalized-unit-shape (get-in simple-test-state [:player-states 0 :unit-states 0])
+                                        (:rules simple-test-state)) => [[0 0] [0 10] [10 0] [10 10]])
+
+
+(fact "unit size is calculated correctly"
+  (collisions/get-unit-size (get-in simple-test-state [:player-states 0 :unit-states 0])
+                            (:rules simple-test-state)) => [10 10])
 
 (facts "coord intersects"
   (fact "coordinates intersect with object"
