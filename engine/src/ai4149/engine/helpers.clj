@@ -1,4 +1,4 @@
-(ns backend.helpers)
+(ns ai4149.engine.helpers)
 
 (defn find-player-state 
   "Search a PlayerState record from game state by player name"

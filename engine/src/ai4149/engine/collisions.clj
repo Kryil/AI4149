@@ -1,7 +1,7 @@
-(ns backend.collisions
-  (:use [backend.messages]
-        [backend.helpers])
-  (:import [backend.messages Coordinates]))
+(ns ai4149.engine.collisions
+  (:use [ai4149.messages]
+        [ai4149.engine.helpers])
+  (:import [ai4149.messages Coordinates]))
 
 (defn avg [coll]
   (/ (apply + coll) (count coll)))

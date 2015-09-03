@@ -1,8 +1,8 @@
-(ns backend.game
-  (:require [backend.messages :refer :all] 
-            [backend.helpers :refer :all] 
-            [backend.collisions :refer :all])
-  (:import [backend.messages Coordinates]))
+(ns ai4149.engine.game
+  (:require [ai4149.messages :refer :all] 
+            [ai4149.engine.helpers :refer :all] 
+            [ai4149.engine.collisions :refer :all])
+  (:import [ai4149.messages Coordinates]))
 
 
 (defn process-factory [building-state]

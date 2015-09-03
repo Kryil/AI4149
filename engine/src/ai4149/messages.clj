@@ -1,4 +1,4 @@
-(ns backend.messages)
+(ns ai4149.messages)
 
 (defrecord Coordinates [x y])
 
@@ -25,9 +25,9 @@
   [^Integer turn
    ^Integer turns
    resources
-   ^"[Lbackend.messages.UnitState;" unit-states
-   ^"[Lbackend.messages.BuildingState;" building-states
-   ^"[Lbackend.messages.Thing;" things])
+   ^"[Lai4149.messages.UnitState;" unit-states
+   ^"[Lai4149.messages.BuildingState;" building-states
+   ^"[Lai4149.messages.Thing;" things])
 
 (defrecord PlayerCommand
   [player
@@ -38,8 +38,8 @@
 (defrecord PlayerState
   [player
    resources
-   ^"[Lbackend.messages.UnitState;" unit-states
-   ^"[Lbackend.messages.BuildingState;" building-states
+   ^"[Lai4149.messages.UnitState;" unit-states
+   ^"[Lai4149.messages.BuildingState;" building-states
    errors])
 
 (defrecord UnitRule
@@ -58,5 +58,5 @@
    ^Integer turns
    rules
    ; todo map
-   ^"[Lbackend.messages.PlayerState;" player-states])
+   ^"[Lai4149.messages.PlayerState;" player-states])
 

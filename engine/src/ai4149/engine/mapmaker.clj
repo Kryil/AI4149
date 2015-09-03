@@ -1,4 +1,4 @@
-(ns backend.mapmaker
+(ns ai4149.engine.mapmaker
   (:require [clojure.data.json :as json]))
 
 (def gamefield (atom {:size [5050 3530]}))

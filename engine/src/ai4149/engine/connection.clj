@@ -1,4 +1,4 @@
-(ns backend.connection
+(ns ai4149.engine.connection
   (:require [clojure.data.json :as json]
             [clojure.java.io :as io])
   (:import [java.net ServerSocket]))

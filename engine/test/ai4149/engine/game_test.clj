@@ -1,17 +1,17 @@
-(ns backend.game_test
+(ns ai4149.engine.game_test
   (:require [midje.sweet :refer :all]
-            [backend.messages :refer :all]
-            [backend.helpers :refer :all]
-            [backend.collisions :as collisions]
-            [backend.game :as game]
-            [backend.game-test-data :refer [simple-test-state]]))
+            [ai4149.messages :refer :all]
+            [ai4149.engine.helpers :refer :all]
+            [ai4149.engine.collisions :as collisions]
+            [ai4149.engine.game :as game]
+            [ai4149.game-test-data :refer [simple-test-state]]))
 
 (fact "turn counter is increased"
   (:turn (game/process-turn simple-test-state [])) => 1
   (:turn (reduce (fn [state n] (game/process-turn state [])) simple-test-state (range 3))) => 3)
 
 (facts "building a harvester"
-  (let [command #backend.messages.PlayerCommand["player-1" "p1-b1" :build :harvester]
+  (let [command #ai4149.messages.PlayerCommand["player-1" "p1-b1" :build :harvester]
         updated-state (game/process-turn simple-test-state [command])
         p-state (find-player-state "player-1" updated-state)]
 
@@ -69,7 +69,7 @@
 
 
 (facts "can not build if not enough resources"
-  (let [command #backend.messages.PlayerCommand["player-1" "p1-b1" :build :harvester]
+  (let [command #ai4149.messages.PlayerCommand["player-1" "p1-b1" :build :harvester]
         reduced-resources-state (update-in simple-test-state 
                                            [:player-states] 
                                            (fn [l] (map (fn [ps] (assoc ps :resources 300)) l)))
@@ -93,7 +93,7 @@
       (map :player (:player-states updated-state)) => ["player-1" "player-2"])))
 
 (facts "can not build units without cost"
-  (let [command #backend.messages.PlayerCommand["player-1" "p1-b1" :build :commander]
+  (let [command #ai4149.messages.PlayerCommand["player-1" "p1-b1" :build :commander]
         updated-state (game/process-turn simple-test-state [command])
         p-state (find-player-state "player-1" updated-state)]
 
@@ -110,7 +110,7 @@
       (second (first (:errors p-state))) => :can-not-build)))
 
 (facts "can not build units from wrong builder"
-  (let [command #backend.messages.PlayerCommand["player-1" "p1-b1" :build :factory]
+  (let [command #ai4149.messages.PlayerCommand["player-1" "p1-b1" :build :factory]
         updated-state (game/process-turn simple-test-state [command])
         p-state (find-player-state "player-1" updated-state)]
 
@@ -127,7 +127,7 @@
       (second (first (:errors p-state))) => :can-not-build)))
 
 (facts "can not build units without built-by"
-  (let [command #backend.messages.PlayerCommand["player-1" "p1-b1" :build :commander]
+  (let [command #ai4149.messages.PlayerCommand["player-1" "p1-b1" :build :commander]
         updated-state (game/process-turn simple-test-state [command])
         p-state (find-player-state "player-1" updated-state)]
 
@@ -145,7 +145,7 @@
 
 
 (facts "can not start a new build when another is in progress"
-  (let [command #backend.messages.PlayerCommand["player-1" "p1-b1" :build :harvester]
+  (let [command #ai4149.messages.PlayerCommand["player-1" "p1-b1" :build :harvester]
         updated-state (game/process-turn simple-test-state [command])
         p-state (find-player-state "player-1" updated-state)]
 
@@ -157,7 +157,7 @@
     (fact "player resources were substracted"
       (:resources p-state) => 1500)
     
-    (let [tank-command #backend.messages.PlayerCommand["player-1" "p1-b1" :build :tank]
+    (let [tank-command #ai4149.messages.PlayerCommand["player-1" "p1-b1" :build :tank]
           tank-state (game/process-turn updated-state [tank-command])
           p-state (find-player-state "player-1" tank-state)
           b-state (find-building-state "p1-b1" p-state)]

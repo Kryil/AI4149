@@ -1,4 +1,4 @@
-(ns backend.core
+(ns ai4149.engine.core
   (:gen-class))
 
 (defn -main
