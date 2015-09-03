@@ -33,7 +33,17 @@
 
 (fact "unit size is calculated correctly"
   (collisions/get-unit-size (get-in simple-test-state [:player-states 0 :unit-states 0])
-                            (:rules simple-test-state)) => [10 10])
+                            (:rules simple-test-state)) => [11 11])
+
+(fact "bordering boxes are generated"
+  (collisions/bordering-areas [[10 10] [20 10] [20 20] [10 20]] [10 10]) => [[[0 0] [0 9] [9 0] [9 9]] ; top left
+                                                                             [[10 0] [10 9] [19 0] [19 9]] ; top center
+                                                                             [[20 0] [20 9] [29 0] [29 9]] ; top right
+                                                                             [[21 10] [21 19] [30 10] [30 19]] ; middle right
+                                                                             [[21 20] [21 29] [30 20] [30 29]] ; bottom right
+                                                                             [[10 21] [10 30] [19 21] [19 30]] ; bottom center
+                                                                             [[0 20] [0 29] [9 20] [9 29]] ; bottom left
+                                                                             [[0 10] [0 19] [9 10] [9 19]]]) ; middle left
 
 (facts "coord intersects"
   (fact "coordinates intersect with object"

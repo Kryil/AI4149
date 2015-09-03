@@ -27,8 +27,8 @@
   (let [shape (get-normalized-unit-shape unit unit-rules)
         min-point (first shape)
         max-point (last shape)]
-    [(- (first max-point) (first min-point))
-     (- (second max-point) (second min-point))]))
+    [(- (first max-point) (first min-point) -1)
+     (- (second max-point) (second min-point) -1)]))
 
 (defn scale-area 
   "Scales area r amount. Currently supports only rectangles."
@@ -38,6 +38,48 @@
     (mapv (fn [[x y]] [(+ x (if (< x avg-x) (* -1 r) r))
                        (+ y (if (< y avg-y) (* -1 r) r))])
           area)))
+
+(defn- make-rect [[top-x left-y] [w h]]
+  (let [bottom-x (+ top-x w -1)
+        right-y (+ left-y h -1)]
+  [[top-x left-y]
+   [top-x right-y]
+   [bottom-x left-y]
+   [bottom-x right-y]]))
+
+(defn bordering-areas [area [width height]]
+  (let [sorted-area (sort area)
+        top-left (first sorted-area)
+        bottom-left (second sorted-area)
+        top-right (nth sorted-area 2)
+        bottom-right (last sorted-area)
+        min-x (- (first top-left) width)
+        min-y (- (second top-left) height)
+        max-x (+ (first top-right) width)
+        max-y (+ (first bottom-right) height)
+        items-in-x (quot max-x width)
+        items-in-y (quot max-y height)]
+            ; top row
+    (concat (mapv (fn [n] (make-rect [(+ min-x (* width n))
+                                      min-y] 
+                                     [width height])) 
+                  (range items-in-x))
+            ; right column
+            (mapv (fn [n] (make-rect [(inc (first top-right))
+                                      (+ min-y (* height n))] 
+                                     [width height])) 
+                  (range 1 items-in-y))
+            ; bottom row
+            (mapv (fn [n] (make-rect [(+ min-x (* width n))
+                                      (inc (second bottom-left))]
+                                     [width height])) 
+                  (range (- items-in-x 2) 0 -1))
+            ; left column
+            (mapv (fn [n] (make-rect [min-x 
+                                      (+ min-y (* height n))]
+                                     [width height])) 
+                  (range (dec items-in-y) 0 -1)))
+    ))
 
 (defn point-intersects? 
   "Tests is the point inside area. Currently supports only rectangular
