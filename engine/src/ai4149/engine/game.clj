@@ -14,4 +14,5 @@
     (process-units)
     (process-factories)
     (process-build-commands (filter (fn [cmd] (= (:action cmd) :build)) player-commands))
+    (process-move-commands (filter (fn [cmd] (= (:action cmd) :move)) player-commands))
     increase-turn-counter))

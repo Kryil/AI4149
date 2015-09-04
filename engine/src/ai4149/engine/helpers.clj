@@ -10,6 +10,11 @@
   [building player-state]
   (first (filter (fn [bs] (= (:id bs) building)) (:building-states player-state))))
 
+(defn find-unit-state
+  "Search for an unit state from player state"
+  [unit player-state]
+  (first (filter (fn [us] (= (:id us) unit)) (:unit-states player-state))))
+
 (defn find-unit-rule
   "Search for unit rule"
   [unit-type rules]
@@ -42,10 +47,14 @@
 
 (defn uuid [] (str (java.util.UUID/randomUUID)))
 
+
+(defmacro action= [a-state action]
+  `(= (:action ~a-state) ~action))
+
 (defmacro on-action 
   "Tests if :action matches in given state. If true, evaluates and returns then expr,
   otherwise else expr, if supplied, else a-state."
   ([a-state action then] `(on-action ~a-state ~action ~then ~a-state))
-  ([a-state action then else] `(if (= (:action ~a-state) ~action) ~then ~else)))
+  ([a-state action then else] `(if (action= ~a-state ~action) ~then ~else)))
 
 
