@@ -38,18 +38,10 @@
                                updated-b-states))))))
 
 
-(defn process-player-units [player-state]
-  (map-player-unit-states 
-      #(on-action % :new (assoc % :action :idle))
-      player-state))
-
 
 
 (defn process-factories [state]
   (map-player-states (partial process-player-factories state) state))
-
-(defn process-units [state]
-  (map-player-states process-player-units state))
 
 (defn process-build-command [state command]
   (let [player (:player command)
@@ -86,7 +78,6 @@
                                                               (:errors p-state)))
                    :else up-p-state)
                  (filter (fn [ps] (not= (:player ps) player)) (:player-states state))))))
-
 
 
 

@@ -1,7 +1,6 @@
 (ns ai4149.engine.game
-  (:require [ai4149.messages :refer :all] 
-            [ai4149.engine.factory :refer :all])
-  (:import [ai4149.messages Coordinates]))
+  (:require [ai4149.engine.factory :refer :all]
+            [ai4149.engine.unit :refer :all]))
 
 (defn increase-turn-counter [state]
   (update-in state [:turn] inc))
