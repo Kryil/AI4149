@@ -50,7 +50,7 @@
      :unit-states [#ai4149.messages.UnitState
                    {:id "p1-commander"
                     :type :commander
-                    :position #ai4149.messages.Coordinates[20 12]
+                    :position #ai4149.messages.Coordinates[30 12]
                     :action :idle
                     :action-coordinates nil}]
      :building-states [#ai4149.messages.BuildingState{:id "p1-b1" 

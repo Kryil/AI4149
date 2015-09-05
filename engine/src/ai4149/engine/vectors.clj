@@ -34,7 +34,7 @@
       (let [x (:x v)
             y (:y v)
             r (/ n m)]
-        (Coordinates. (* x r) (* y r)))
+        (Coordinates. (Math/round (double (* x r))) (Math/round (double (* y r)))))
       v)))
 
 

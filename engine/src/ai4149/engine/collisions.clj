@@ -127,17 +127,21 @@
         (point-intersects? sorted-area-b min-point-a)
         (point-intersects? sorted-area-b max-point-a))))
 
-(defn all-areas [state]
-  (let [rules (:rules state)
-        player-states (:player-states state)
-        units (apply concat (map :unit-states player-states))
-        buildings (apply concat (map :building-states player-states))]
-    (concat (map #(get-unit-area % rules) units) 
-            (map #(get-unit-area % rules) buildings))))
-   
+(defn all-areas 
+  ([state] (all-areas state []))
+  ([state not-ids]
+    (let [rules (:rules state)
+          player-states (:player-states state)
+          units (filter (fn [us] (every? #(not= (:id us) %) not-ids)) (apply concat (map :unit-states player-states)))
+          buildings (filter (fn [bs] (every? #(not= (:id bs) %) not-ids)) (apply concat (map :building-states player-states)))]
+      (concat (map #(get-unit-area % rules) units) 
+              (map #(get-unit-area % rules) buildings)))))
+     
 
-(defn area-free? [state area]
-  (let [areas (all-areas state)]
-    (not-any? (partial area-intersects? area) areas)))
+(defn area-free? 
+  ([state area] (area-free? state area []))
+  ([state area not-ids]
+    (let [areas (all-areas state not-ids)]
+      (not-any? (partial area-intersects? area) areas))))
 
 
