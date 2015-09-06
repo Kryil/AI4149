@@ -6,25 +6,13 @@
   (:import [ai4149.messages Coordinates]))
 
 
-(defn- calculate-next-position [speed coordinates position]
-  (let [requested-move (vectors/distance position (first coordinates))
-        requested-magnitude (vectors/magnitude requested-move)
-        move (vectors/limit requested-move speed)
-        next-position (vectors/add position move)]
-    (if (< requested-magnitude speed)
-      (calculate-next-position (- speed requested-magnitude)
-                               (rest coordinates)
-                               next-position)
-      [next-position (if (= requested-magnitude speed) nil coordinates)])))
-     
-
 (defn move-unit 
   ([state unit] (move-unit state unit (:action-args unit)))
   ([state unit coordinates]
    (let [unit-rule (find-unit-rule (:type unit) (:rules state))
          speed (:speed unit-rule)
          position (:position unit)
-         [new-position remaining-moves] (calculate-next-position speed coordinates position)
+         [new-position remaining-moves] (vectors/calculate-next-position speed coordinates position)
          new-area (shape->area (:shape unit-rule) new-position)]
      (cond
        (not (area-free? state new-area [(:id unit)])) (assoc (assoc unit :action :obstructed)

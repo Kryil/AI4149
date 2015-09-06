@@ -6,7 +6,15 @@
   (:import [ai4149.messages Coordinates]
            [ai4149.messages Projectile]))
 
-(defn move-projectile [])
+(defn move-projectile [projectile]
+  (let [[new-position remaining-moves] (vectors/calculate-next-position (:velocity projectile)
+                                                                        [(:target projectile)]
+                                                                        (:position projectile))]
+    (assoc projectile :position new-position)))
+
+(defn move-projectiles [state]
+  (let [moved-projectiles (map move-projectile (:projectiles state))]
+    (assoc state :projectiles moved-projectiles)))
 
 (defn process-fire-command [state command]
   (let [player (:player command)
@@ -20,9 +28,8 @@
                                   (:velocity weapon-rule)
                                   (:damage weapon-rule)
                                   (:position unit)
-                                  target-coords)
-          up-player-state (assoc player-state :projectiles (cons projectile (:projectiles player-state)))]
-      (update-state state :player-states up-player-state :player))))
+                                  target-coords)]
+      (add-to-state state :projectiles projectile))))
 
 (defn process-fire-commands [state commands]
   (reduce process-fire-command state commands))

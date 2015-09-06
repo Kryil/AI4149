@@ -16,5 +16,6 @@
     (process-units player-commands)
     (process-factories)
     (process-fire-commands (filter (fn [cmd] (action= cmd :fire)) player-commands))
+    (move-projectiles)
     (process-build-commands (filter (fn [cmd] (= (:action cmd) :build)) player-commands))
     increase-turn-counter))

@@ -56,6 +56,12 @@
                      new-state-val
                      (filter (fn [s] (not= (key-fn s) (key-fn new-state-val))) (k state))))))
 
+(defn add-to-state 
+  "Add new-val to state coll k."
+  [state k new-val]
+  (assoc state k (cons new-val (k state))))
+
+
 (defn uuid [] (str (java.util.UUID/randomUUID)))
 
 

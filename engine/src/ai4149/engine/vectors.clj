@@ -38,5 +38,16 @@
       v)))
 
 
+(defn calculate-next-position [velocity coordinates position]
+  (let [requested-move (distance position (first coordinates))
+        requested-magnitude (magnitude requested-move)
+        move (limit requested-move velocity)
+        next-position (add position move)]
+    (if (< requested-magnitude velocity)
+      (calculate-next-position (- velocity requested-magnitude)
+                               (rest coordinates)
+                               next-position)
+      [next-position (if (= requested-magnitude velocity) nil coordinates)])))
+ 
 
 

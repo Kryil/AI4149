@@ -9,13 +9,17 @@
            [ai4149.messages PlayerCommand]))
 
 (facts "firing a weapon"
-  (let [command (PlayerCommand. "player-1" "p1-commander" :fire [:main (Coordinates. 40 15)])
+  (let [command (PlayerCommand. "player-1" "p1-commander" :fire [:main (Coordinates. 90 12)])
         updated-state (game/process-turn simple-test-state [command])
         p-state (find-player-state "player-1" updated-state)]
     (fact "projectile is listed in player-state"
-      (:projectiles p-state) =not=> nil
-      (count (:projectiles p-state)) => 1)))
-; todo weapon projectile moves like units
+      (:projectiles updated-state) =not=> nil
+      (count (:projectiles updated-state)) => 1)
+    (fact "projectile moves"
+      (:position (first (:projectiles updated-state))) => (Coordinates. 55 12)
+      (:target (first (:projectiles updated-state))) => (Coordinates. 90 12))))
+
+; todo projectiles are removed when range is reached
 ; todo projectiles hit on any object in the path, including walls on the map
 ; todo damage is caused
 ; todo armor effects are included in damage calculation
