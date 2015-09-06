@@ -11,8 +11,7 @@
                                                                         [(:target projectile)]
                                                                         (:position projectile))
         new-range (- (:range projectile) (:velocity projectile))]
-    (if (or (zero? new-range) (neg? new-range))
-      nil
+    (when (> new-range 0)
       (assoc (assoc projectile :position new-position)
              :range new-range))))
 

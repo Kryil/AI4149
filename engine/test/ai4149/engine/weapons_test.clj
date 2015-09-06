@@ -22,7 +22,6 @@
       (fact "projectile was removed from the list when range was reached"
         (count (:projectiles next-state)) => 0))))
 
-; todo projectiles are removed when range is reached
 ; todo projectiles hit on any object in the path, including walls on the map
 ; todo damage is caused
 ; todo armor effects are included in damage calculation
