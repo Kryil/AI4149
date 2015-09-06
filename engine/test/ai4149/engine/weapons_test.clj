@@ -10,14 +10,17 @@
 
 (facts "firing a weapon"
   (let [command (PlayerCommand. "player-1" "p1-commander" :fire [:main (Coordinates. 90 12)])
-        updated-state (game/process-turn simple-test-state [command])
-        p-state (find-player-state "player-1" updated-state)]
+        updated-state (game/process-turn simple-test-state [command])]
     (fact "projectile is listed in player-state"
       (:projectiles updated-state) =not=> nil
       (count (:projectiles updated-state)) => 1)
     (fact "projectile moves"
       (:position (first (:projectiles updated-state))) => (Coordinates. 55 12)
-      (:target (first (:projectiles updated-state))) => (Coordinates. 90 12))))
+      (:target (first (:projectiles updated-state))) => (Coordinates. 90 12)
+      (:range (first (:projectiles updated-state))) => 25)
+    (let [next-state (game/process-turn updated-state [])]
+      (fact "projectile was removed from the list when range was reached"
+        (count (:projectiles next-state)) => 0))))
 
 ; todo projectiles are removed when range is reached
 ; todo projectiles hit on any object in the path, including walls on the map

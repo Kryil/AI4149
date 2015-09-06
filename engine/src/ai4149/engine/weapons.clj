@@ -9,11 +9,15 @@
 (defn move-projectile [projectile]
   (let [[new-position remaining-moves] (vectors/calculate-next-position (:velocity projectile)
                                                                         [(:target projectile)]
-                                                                        (:position projectile))]
-    (assoc projectile :position new-position)))
+                                                                        (:position projectile))
+        new-range (- (:range projectile) (:velocity projectile))]
+    (if (or (zero? new-range) (neg? new-range))
+      nil
+      (assoc (assoc projectile :position new-position)
+             :range new-range))))
 
 (defn move-projectiles [state]
-  (let [moved-projectiles (map move-projectile (:projectiles state))]
+  (let [moved-projectiles (filter (complement nil?) (map move-projectile (:projectiles state)))]
     (assoc state :projectiles moved-projectiles)))
 
 (defn process-fire-command [state command]
