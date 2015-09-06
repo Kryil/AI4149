@@ -25,6 +25,9 @@
   [unit-type rules]
   (:cost (find-unit-rule unit-type rules)))
 
+(defn find-unit-weapon-rule [unit-type weapon rules]
+  (weapon (:weapons (find-unit-rule unit-type rules))))
+
 (defn map-state 
   "Apply function f to each item in state selected by k."
   [f state k]
@@ -44,6 +47,14 @@
   "Apply a function to every units state in given player state and return updated player state"
   [f player-state]
   (map-state f player-state :unit-states))
+
+(defn update-state 
+  "Replaces item in state in coll defined by k with new-state-val compared by key-fn."
+  ([state k new-state-val] (update-state state k new-state-val :id))
+  ([state k new-state-val key-fn]
+    (assoc state k (cons 
+                     new-state-val
+                     (filter (fn [s] (not= (key-fn s) (key-fn new-state-val))) (k state))))))
 
 (defn uuid [] (str (java.util.UUID/randomUUID)))
 

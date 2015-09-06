@@ -15,7 +15,12 @@
             :cost nil
             :build-time nil
             :built-by nil
-            :shape [[-5 -5] [5 -5] [5 5] [-5 5]]}
+            :shape [[-5 -5] [5 -5] [5 5] [-5 5]]
+            :weapons {:main #ai4149.messages.WeaponRule
+                            {:type :projectile
+                             :range 50
+                             :velocity 25
+                             :damage 20}}}
            #ai4149.messages.UnitRule
            {:name "Lt. Commander"
             :type :harvester
@@ -33,7 +38,12 @@
             :cost 100
             :build-time 5
             :built-by :factory
-            :shape [[-2 -2] [2 -2] [2 2] [-2 2]]}
+            :shape [[-2 -2] [2 -2] [2 2] [-2 2]]
+            :weapons {:main #ai4149.messages.WeaponRule
+                            {:type :projectile
+                             :range 40
+                             :velocity 20
+                             :damage 10}}}
            #ai4149.messages.UnitRule
            {:name "Factory"
             :type :factory
@@ -51,11 +61,13 @@
                    {:id "p1-commander"
                     :type :commander
                     :position #ai4149.messages.Coordinates[30 12]
+                    :health 100
                     :action :idle
                     :action-coordinates nil}]
      :building-states [#ai4149.messages.BuildingState{:id "p1-b1" 
                                                       :type :factory
                                                       :position #ai4149.messages.Coordinates[10 15]
+                                                      :health 100
                                                       :action :idle
                                                       :action-args nil}]}
     #ai4149.messages.PlayerState
@@ -65,11 +77,20 @@
                    {:id "p2-u1"
                     :type :commander
                     :position #ai4149.messages.Coordinates[160 200]
+                    :health 100
+                    :action :idle
+                    :action-coordinates nil}
+                   #ai4149.messages.UnitState
+                   {:id "p2-tank-1"
+                    :type :tank
+                    :position #ai4149.messages.Coordinates[70 50]
+                    :health 100
                     :action :idle
                     :action-coordinates nil}]
      :building-states [#ai4149.messages.BuildingState{:id "p2-b1" 
                                                       :type :factory
                                                       :position #ai4149.messages.Coordinates[100 150]
+                                                      :health 100
                                                       :action :idle
                                                       :action-args nil}]}]})
 

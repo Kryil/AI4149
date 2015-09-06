@@ -6,6 +6,7 @@
   [id
    type
    ^Coordinates position
+   health
    action
    ^Coordinates action-coordinates])
 
@@ -20,6 +21,13 @@
   [id
    ^String thing-type
    ^Coordinates position])
+
+(defrecord Projectile
+  [range
+   velocity
+   damage
+   position
+   target])
 
 (defrecord GameState
   [^Integer turn
@@ -40,7 +48,14 @@
    resources
    ^"[Lai4149.messages.UnitState;" unit-states
    ^"[Lai4149.messages.BuildingState;" building-states
+   projectiles
    errors])
+
+(defrecord WeaponRule
+  [type
+   range
+   velocity
+   damage])
 
 (defrecord UnitRule
   [name
@@ -50,7 +65,8 @@
    cost
    build-time
    built-by
-   shape])
+   shape
+   weapons])
    
 
 (defrecord FullGameState
