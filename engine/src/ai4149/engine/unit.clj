@@ -33,42 +33,29 @@
                            :position new-position)
                     :action-args remaining-moves)))))
 
+(defn process-unit-move-command [state p-state unit-state command]
+  (let [unit-id (:id unit-state)
+        coordinates (:action-args command)]
+    (move-unit state unit-state coordinates)))
 
-(defn process-player-units [state player-state]
-  (map-player-unit-states 
-    (fn [u-state]
-      (cond
-        (action= u-state :new) (assoc u-state :action :idle)
-        (action= u-state :moving) (move-unit state u-state)
-        :else u-state))
-    player-state))
+(defn process-commands-for-unit [state player-state unit-state commands]
+  (reduce (fn [u-state cmd] (process-unit-move-command state player-state u-state cmd))
+          unit-state
+          (filter (fn [cmd] (= (:action cmd) :move)) commands)))
 
-
-(defn process-units [state]
-  (map-player-states (partial process-player-units state) state))
-
-
-(defn process-move-command [state command]
-  (let [player (:player command)
-        unit-id (:target-id command)
-        coordinates (:action-args command)
-        p-state (find-player-state player state)
-        unit-state (find-unit-state unit-id p-state)
-        unit-rule (find-unit-rule (:type unit-state) (:rules state))
-        up-unit-state (move-unit state unit-state coordinates)
-        up-p-state (assoc p-state :unit-states 
-                          (cons up-unit-state 
-                                (filter (fn [us] (not= (:id us) unit-id)) (:unit-states p-state))))]
-    (assoc state
-           :player-states
-           (cons
-             up-p-state
-             (filter (fn [ps] (not= (:player ps) player)) (:player-states state))))))
+(defn process-player-units [state commands player-state]
+  (let [p-commands (filter (fn [cmd] (= (:player cmd) (:player player-state))) commands)]
+    (map-player-unit-states 
+      (fn [u-state]
+        (let [u-commands (filter (fn [cmd] (= (:target-id cmd) (:id u-state))) p-commands)]
+          (cond
+            (not-empty u-commands) (process-commands-for-unit state player-state u-state u-commands)
+            (action= u-state :new) (assoc u-state :action :idle)
+            (action= u-state :moving) (move-unit state u-state)
+            :else u-state)))
+      player-state)))
 
 
-(defn process-move-commands [state move-commands]
-  (reduce process-move-command state move-commands))
-
-
-
+(defn process-units [state commands]
+  (map-player-states (partial process-player-units state commands) state))
 

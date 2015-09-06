@@ -24,7 +24,16 @@
             commander (find-unit-state "p1-commander" p-state)]
         (:action commander) => :idle
         (:position commander) => (Coordinates. 40 12)
-        (:action-args commander) => nil)))
+        (:action-args commander) => nil))
+    (let [new-command (PlayerCommand. "player-1" "p1-commander" :move [(Coordinates. 35 30)])
+          new-state (game/process-turn updated-state [new-command])
+          p-state (find-player-state "player-1" new-state)
+          commander (find-unit-state "p1-commander" p-state)]
+      (fact "new move command overrides previous command"
+        (:action commander) => :moving
+        (:action-args commander) => [(Coordinates. 35 30)]
+        (:position commander) => (Coordinates. 35 17))))
+       
   (let [command (PlayerCommand. "player-1" "p1-commander" :move [(Coordinates. 11 16)])
         updated-state (game/process-turn simple-test-state [command])
         p-state (find-player-state "player-1" updated-state)
@@ -37,6 +46,6 @@
       (fact "unit has the coordinates in action args"
         (:action-args commander) => [(Coordinates. 11 16)]))))
 
-; todo new move commands override previous commands
+; todo test obstructed movement against map
 
 

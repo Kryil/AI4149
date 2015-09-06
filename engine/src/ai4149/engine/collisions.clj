@@ -89,8 +89,7 @@
                     (mapv (fn [n] (make-rect [min-x 
                                               (+ min-y (* height n))]
                                              [width height])) 
-                          (range (dec items-in-y) 0 -1))))
-    ))
+                          (range (dec items-in-y) 0 -1))))))
 
 (defn point-intersects? 
   "Tests is the point inside area. Currently supports only rectangular

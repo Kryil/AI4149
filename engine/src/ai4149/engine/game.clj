@@ -11,8 +11,7 @@
   [state player-commands]
   (->
     state
-    (process-units)
+    (process-units player-commands)
     (process-factories)
     (process-build-commands (filter (fn [cmd] (= (:action cmd) :build)) player-commands))
-    (process-move-commands (filter (fn [cmd] (= (:action cmd) :move)) player-commands))
     increase-turn-counter))
