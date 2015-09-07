@@ -1,6 +1,7 @@
 (ns ai4149.engine.collisions
   (:use [ai4149.messages]
         [ai4149.engine.helpers])
+  (:require [ai4149.engine.vectors :as vectors])
   (:import [ai4149.messages Coordinates]))
 
 (defn avg [coll]
@@ -38,6 +39,13 @@
         min-shape-point (first sorted-shape)]
     (Coordinates. (- (first min-point) (first min-shape-point))
                   (- (second min-point) (second min-shape-point)))))
+
+(defn get-center-coordinates [area]
+  (let [sorted-area (sort area)
+        min-point (first sorted-area)
+        max-point (last sorted-area)]
+    (Coordinates. (+ (first min-point) (/ (- (first max-point) (first min-point)) 2))
+                  (+ (second min-point) (/ (- (second max-point) (second min-point)) 2)))))
 
 
 (defn scale-area 
@@ -143,4 +151,24 @@
     (let [areas (all-areas state not-ids)]
       (not-any? (partial area-intersects? area) areas))))
 
+(defn in-area [state area]
+  (let [rules (:rules state)
+        pred (partial area-intersects? area)]
+    (map (fn [ps] [(:player ps) 
+                   (concat
+                     (filter #(pred (get-unit-area % rules)) (:unit-states ps))
+                     (filter #(pred (get-unit-area % rules)) (:building-states ps)))])
+         (:player-states state))))
 
+(defn nearest-in-area [state area]
+  (let [center-coords (get-center-coordinates area)
+        units-in-area (in-area state area)
+        unit-list (apply concat (map (fn [[p units]] (map (fn [u] [p (:id u) (:position u)]) units)) units-in-area))
+        nearest (first (sort-by
+                         (fn [coll] 
+                           (vectors/magnitude-between center-coords (nth coll 2)))
+                         <
+                         unit-list))
+        match (some #(when (= (first %) (first nearest)) %) units-in-area)]
+    [(first match) (some #(when (= (:id %) (second nearest)) %) (second match))]))
+ 
