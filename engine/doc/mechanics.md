@@ -2,8 +2,9 @@
 
 ## Units
 
-Unit locations are indexed by their top left corner.
+Unit locations are indexed by their center point.
 
+TODO fix image.
 ![unitIndex]
 
 ### Commander
@@ -71,6 +72,38 @@ the next moves for their units. The server then plays the turn for each player
 simultaneously. For example when a player is firing weapons to a tank that was
 stationary in the previous turn, it may not hit because the tank may have begun
 moving.
+
+### Commands
+
+Players can send any number of commands during for every turn, but only last
+command per unit or building is taken into action. Possible commands for
+buildings are limited to one: `build`. The `build` command instructs a factory
+to produce a new unit, determined by the command argument. Resources are
+subtracted immediately and building of the unit starts.
+
+Units can take five different commands: `move`, `fire`, `gather`, `build` and
+`repair`.
+
+The `move` command takes a list of coordinates as the argument and it
+instructs unit to move along the given path. The unit state is changed to 
+`moving` and the unit moves towards the next coordinate in the list, until it
+reaches it or the path is obstructed. The state is changed to `idle` or 
+`obstructed`, respectively. 
+
+The `fire` command requires the weapon id and 
+coordinates where to shoot. 
+
+The `gather` command can be given to the commander
+and harvester and it is executed when the unit is over a resource. 
+
+Finally `build` and `repair` commands can be given to commander and harvester
+and they instruct the unit either to construct a new building or repair the
+targeted building or unit.
+
+Every command cancels all previous ones. For example a moving unit will stop
+when it is instructed to fire and commander will stop repairing when it is
+ordered to build. An exception to this is the factory, which will not accept
+a new command before previous one has been fully executed.
 
 ### Scores
 
