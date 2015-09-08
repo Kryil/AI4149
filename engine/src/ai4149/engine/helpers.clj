@@ -56,6 +56,17 @@
                      new-state-val
                      (filter (fn [s] (not= (key-fn s) (key-fn new-state-val))) (k state))))))
 
+(defn update-state 
+  ([state k new-val] (update-state state k new-val (:id new-val)))
+  ([state k new-val val-id]
+   (assoc state 
+          k 
+          (cons new-val 
+                (filter (fn [s] (not= (:id s) val-id)) (k state))))))
+  #_(assoc up-p-state :building-states 
+                          (cons up-b-state 
+                                (filter (fn [bs] (not= (:id bs) building-id)) (:building-states up-p-state))))
+
 (defn add-to-state 
   "Add new-val to state coll k."
   [state k new-val]
