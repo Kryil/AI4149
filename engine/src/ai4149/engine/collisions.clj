@@ -160,15 +160,54 @@
                      (filter #(pred (get-unit-area % rules)) (:building-states ps)))])
          (:player-states state))))
 
-(defn nearest-in-area [state area]
-  (let [center-coords (get-center-coordinates area)
-        units-in-area (in-area state area)
-        unit-list (apply concat (map (fn [[p units]] (map (fn [u] [p (:id u) (:position u)]) units)) units-in-area))
-        nearest (first (sort-by
-                         (fn [coll] 
-                           (vectors/magnitude-between center-coords (nth coll 2)))
-                         <
-                         unit-list))
-        match (some #(when (= (first %) (first nearest)) %) units-in-area)]
-    [(first match) (some #(when (= (:id %) (second nearest)) %) (second match))]))
+(defn nearest-in-area 
+  ([state area] (nearest-in-area state area (get-center-coordinates area)))
+  ([state area center-coords]
+   (let [units-in-area (in-area state area)
+         unit-list (apply concat (map (fn [[p units]] (map (fn [u] [p (:id u) (:position u)]) units)) units-in-area))
+         nearest (first (sort-by
+                          (fn [coll] 
+                            (vectors/magnitude-between center-coords (nth coll 2)))
+                          <
+                          unit-list))
+         match (some #(when (= (first %) (first nearest)) %) units-in-area)]
+     [(first match) (some #(when (= (:id %) (second nearest)) %) (second match))])))
  
+
+(defn- coords->area [a b]
+  [[(:x a) (:y a)] [(:x b) (:y a)] [(:x b) (:y b)] [(:x a) (:y b)]])
+
+(defn- coords-between [a b]
+  (loop [memo []
+         [next-pos remaining-moves] [a [b]]]
+    (if (nil? remaining-moves)
+      (conj memo next-pos)
+      (recur (conj memo next-pos) (vectors/calculate-next-position 1 remaining-moves next-pos)))))
+
+(defn between-coords [state a b]
+  (let [area (coords->area a b)
+        coords (coords-between a b)
+        units-in-area (in-area state area)]
+    (map (fn [[player units]]
+           [player (filter (fn [u] (some #(coord-intersects? (get-unit-area u (:rules state)) %) coords)) units)])
+         units-in-area)))
+
+(defn nearest-between-coords 
+  ([state a b] (nearest-between-coords state a b []))
+  ([state a b not-ids]
+   (let [units (between-coords state a b)
+         unit-list (filter (fn [u] (every? #(not= (second u) %) not-ids))
+                           (apply concat (map (fn [[p p-units]] 
+                                                (map (fn [u] [p (:id u) (:position u)]) 
+                                                     p-units)) 
+                                              units)))
+         nearest (first 
+                   (sort-by
+                     (fn [coll] 
+                       (vectors/magnitude-between a (nth coll 2)))
+                     <
+                     unit-list))
+         match (some #(when (= (first %) (first nearest)) %) units)]
+     [(first match) (some #(when (= (:id %) (second nearest)) %) (second match))])))
+
+
