@@ -9,9 +9,10 @@
 (defn hit-damage [state [player-id unit] projectile]
   (let [p-state (find-player-state player-id state)
         upd-u-state (update-in unit [:health] #(- % (:damage projectile)))
-        upd-p-state (if (> (:health upd-u-state) 0) 
-                      (update-state p-state :unit-states upd-u-state) 
-                      (assoc p-state :unit-states (filter #(not= (:id %) (:id unit)) (:unit-states p-state))))]
+        upd-p-state (update-state p-state :unit-states (if (> (:health upd-u-state) 0) 
+                                                         upd-u-state
+                                                         (assoc (assoc upd-u-state :action :dead)
+                                                                :action-args (:shooter projectile))))]
       (update-state state :player-states upd-p-state :player)))
 
 (defn move-projectile [state projectile]

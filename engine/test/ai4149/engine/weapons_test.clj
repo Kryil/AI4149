@@ -32,12 +32,17 @@
 
     (let [repeated-fire (reduce (fn [state _] (game/process-turn state [hit-command])) simple-test-state (range 5))
           p2-state (find-player-state "player-2" repeated-fire)]
+      (fact "unit is marked as dead on the turn it dies"
+        (let [unit (find-unit-state "p2-tank-1" p2-state)]
+          (:action unit) => :dead
+          (:action-args unit) => "p1-commander"))
       (fact "dead units are removed from the field"
-        (find-unit-state "p2-tank-1" p2-state) => nil
-        (count (:unit-states p2-state)) => 1))))
+        (let [next-state (game/process-turn repeated-fire [])
+              p2-state (find-player-state "player-2" next-state)]
+          (find-unit-state "p2-tank-1" p2-state) => nil
+          (count (:unit-states p2-state)) => 1)))))
 
 
 ; todo projectiles hit on any object in the path, including walls on the map
 ; todo armor effects are included in damage calculation
-; todo units are destroyed when damage is greater than remaining health (health is always 100 on healthy units)
 ; todo units without weapon can not shoot

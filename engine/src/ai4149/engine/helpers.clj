@@ -31,7 +31,7 @@
 (defn map-state 
   "Apply function f to each item in state selected by k."
   [f state k]
-  (assoc state k (map f (k state))))
+  (assoc state k (filter (complement nil?) (map f (k state)))))
 
 (defn map-player-states 
   "Apply a function to every player state and return updated state"

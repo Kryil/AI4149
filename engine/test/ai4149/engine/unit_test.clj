@@ -47,5 +47,6 @@
         (:action-args commander) => [(Coordinates. 11 16)]))))
 
 ; todo test obstructed movement against map
+; todo dead units can not be ordered around
 
 
