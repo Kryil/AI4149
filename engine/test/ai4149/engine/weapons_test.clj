@@ -21,12 +21,20 @@
     (let [next-state (game/process-turn updated-state [])]
       (fact "projectile was removed from the list when range was reached"
         (count (:projectiles next-state)) => 0)))
+
   (let [hit-command (PlayerCommand. "player-1" "p1-commander" :fire [:main (Coordinates. 49 36)])
         updated-state (game/process-turn simple-test-state [hit-command])
         p2-state (find-player-state "player-2" updated-state)
         p2-tank-state (find-unit-state "p2-tank-1" p2-state)]
+
     (fact "projectile hits the tank"
-      (:health p2-tank-state) => 80)))
+      (:health p2-tank-state) => 80)
+
+    (let [repeated-fire (reduce (fn [state _] (game/process-turn state [hit-command])) simple-test-state (range 5))
+          p2-state (find-player-state "player-2" repeated-fire)]
+      (fact "dead units are removed from the field"
+        (find-unit-state "p2-tank-1" p2-state) => nil
+        (count (:unit-states p2-state)) => 1))))
 
 
 ; todo projectiles hit on any object in the path, including walls on the map
