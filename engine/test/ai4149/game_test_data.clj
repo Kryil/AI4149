@@ -1,6 +1,5 @@
 (ns ai4149.game-test-data 
-  (:require [midje.sweet :refer :all]
-            [ai4149.messages :refer :all]))
+  (:require [ai4149.messages :refer :all]))
 
 
 (def simple-test-state
@@ -83,7 +82,7 @@
                    #ai4149.messages.UnitState
                    {:id "p2-tank-1"
                     :type :tank
-                    :position #ai4149.messages.Coordinates[70 50]
+                    :position #ai4149.messages.Coordinates[45 33]
                     :health 100
                     :action :idle
                     :action-coordinates nil}]

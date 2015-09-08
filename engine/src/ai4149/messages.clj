@@ -27,7 +27,8 @@
    velocity
    damage
    position
-   target])
+   target
+   shooter])
 
 (defrecord GameState
   [^Integer turn

@@ -6,17 +6,30 @@
   (:import [ai4149.messages Coordinates]
            [ai4149.messages Projectile]))
 
-(defn move-projectile [projectile]
+(defn hit-damage [state [player-id unit] projectile]
+  (let [p-state (find-player-state player-id state)
+        upd-u-state (update-in unit [:health] #(- % (:damage projectile)))
+        upd-p-state (update-state p-state :unit-states upd-u-state)]
+  (update-state state :player-states upd-p-state)))
+
+(defn move-projectile [state projectile]
   (let [[new-position remaining-moves] (vectors/calculate-next-position (:velocity projectile)
                                                                         [(:target projectile)]
                                                                         (:position projectile))
-        new-range (- (:range projectile) (:velocity projectile))]
-    (when (> new-range 0)
-      (assoc (assoc projectile :position new-position)
-             :range new-range))))
+        new-range (- (:range projectile) (:velocity projectile))
+        unit-hit (nearest-between-coords state (:position projectile) new-position [(:shooter projectile)])]
+
+    (cond (not (nil? (first unit-hit))) (hit-damage state unit-hit projectile)
+          (> new-range 0) (update-in state [:projectiles] 
+                                     (partial cons 
+                                              (assoc (assoc projectile :position new-position)
+                                                     :range new-range)))
+          :else state)))
 
 (defn move-projectiles [state]
-  (let [moved-projectiles (filter (complement nil?) (map move-projectile (:projectiles state)))]
+  (reduce move-projectile (assoc state :projectiles []) (:projectiles state))
+
+  #_(let [moved-projectiles (filter (complement nil?) (map (partial move-projectile state) (:projectiles state)))]
     (assoc state :projectiles moved-projectiles)))
 
 (defn process-fire-command [state command]
@@ -31,7 +44,8 @@
                                   (:velocity weapon-rule)
                                   (:damage weapon-rule)
                                   (:position unit)
-                                  target-coords)]
+                                  target-coords
+                                  (:id unit))]
       (add-to-state state :projectiles projectile))))
 
 (defn process-fire-commands [state commands]
