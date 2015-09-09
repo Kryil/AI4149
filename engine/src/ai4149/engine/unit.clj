@@ -40,6 +40,7 @@
             (not-empty u-commands) (process-commands-for-unit state player-state u-state u-commands)
             (action= u-state :new) (assoc u-state :action :idle)
             (action= u-state :moving) (move-unit state u-state)
+            (action= u-state :obstructed) (move-unit state u-state)
             (action= u-state :dead) nil
             :else u-state)))
       player-state)))

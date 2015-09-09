@@ -50,13 +50,6 @@
 
 (defn update-state 
   "Replaces item in state in coll defined by k with new-state-val compared by key-fn."
-  ([state k new-state-val] (update-state state k new-state-val :id))
-  ([state k new-state-val key-fn]
-    (assoc state k (cons 
-                     new-state-val
-                     (filter (fn [s] (not= (key-fn s) (key-fn new-state-val))) (k state))))))
-
-(defn update-state 
   ([state k new-val] (update-state state k new-val :id))
   ([state k new-val val-fn]
    (assoc state 
@@ -68,6 +61,10 @@
   "Add new-val to state coll k."
   [state k new-val]
   (assoc state k (cons new-val (k state))))
+
+(defn remove-from-state
+  [state k id-fn val-id]
+  (assoc state k (filter (fn [s] (not= (id-fn s) val-id)) (k state))))
 
 
 (defn uuid [] (str (java.util.UUID/randomUUID)))
