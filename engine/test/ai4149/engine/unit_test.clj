@@ -61,6 +61,22 @@
           (:action next-commander) => :moving
           (:position next-commander) => (Coordinates. 25 13))))))
 
+(facts "collecting resources"
+  (let [command (PlayerCommand. "player-2" "p2-harvester-1" :collect nil)
+        collect-state (game/process-turn simple-test-state [command])
+        p-state (find-player-state "player-2" collect-state)
+        u-state (find-unit-state "p2-harvester-1" p-state)]
+    (fact "resources were added into player state"
+      (:resources p-state) => 2500)
+    (fact "resouces where substracted from map"
+      (let [resource (first (filter (fn [r] (= (:position r) (Coordinates. 200 200))) 
+                                    (get-in collect-state [:map :resources])))]
+        (:amount resource) => 9000))))
+; todo if resource field does not have as much as unit can collect 
+; todo errors
+
+
+
 ; todo test obstructed movement against map
 ; todo dead units can not be ordered around
 

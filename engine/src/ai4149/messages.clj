@@ -66,13 +66,18 @@
    build-time
    built-by
    shape
-   weapons])
+   weapons
+   actions])
+
+(defrecord Resource
+  [position
+   amount])
 
 (defrecord GameMap
   [width
    height
    obstacles
-   territory])
+   resources])
 
 (defrecord FullGameState
   [^Integer turn

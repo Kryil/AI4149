@@ -26,26 +26,61 @@
         coordinates (:action-args command)]
     (move-unit state unit-state coordinates)))
 
-(defn process-commands-for-unit [state player-state unit-state commands]
-  (reduce (fn [u-state cmd] (process-unit-move-command state player-state u-state cmd))
-          unit-state
-          (filter (fn [cmd] (= (:action cmd) :move)) commands)))
+(defn process-collect-command [state player-state unit-state]
+  (let [unit-rule (find-unit-rule (:type unit-state) (:rules state))
+        collect-amount (get-in unit-rule [:actions :collect])
+        unit-position (:position unit-state)
+        resource (some #(when (= (:position %) unit-position) %) (get-in state [:map :resources]))
+        subtracted-resource (update-in resource [:amount] #(- % collect-amount))]
+    (if (and (not (nil? resource)) (not (nil? collect-amount)))
+      (assoc 
+        (update-state state
+                      :player-states
+                      (update-in player-state [:resources] #(+ % collect-amount)))
+        :map
+        (update-state (:map state) :resources subtracted-resource :position))
+      state)))
 
-(defn process-player-units [state commands player-state]
-  (let [p-commands (filter (fn [cmd] (= (:player cmd) (:player player-state))) commands)]
-    (map-player-unit-states 
-      (fn [u-state]
-        (let [u-commands (filter (fn [cmd] (= (:target-id cmd) (:id u-state))) p-commands)]
-          (cond
-            (not-empty u-commands) (process-commands-for-unit state player-state u-state u-commands)
-            (action= u-state :new) (assoc u-state :action :idle)
-            (action= u-state :moving) (move-unit state u-state)
-            (action= u-state :obstructed) (move-unit state u-state)
-            (action= u-state :dead) nil
-            :else u-state)))
-      player-state)))
 
+(defn process-command-for-unit [state player-state unit-state command]
+  (cond
+    (action= command :collect) (process-collect-command state player-state unit-state)
+    :else (update-state 
+            state
+            :player-states
+            (update-state 
+              player-state 
+              :unit-states
+              (cond
+                (action= command :move) (process-unit-move-command state player-state unit-state command)
+                :else unit-state))
+            :player)))
+
+(defn process-player-units [state processed-units player-state]
+  (map-player-unit-states 
+    (fn [u-state]
+      (if (some #(= (:id %) (:id u-state)) processed-units)
+        u-state
+        (cond
+          (action= u-state :new) (assoc u-state :action :idle)
+          (action= u-state :moving) (move-unit state u-state)
+          (action= u-state :obstructed) (move-unit state u-state)
+          (action= u-state :dead) nil
+          :else u-state)))
+    player-state))
+
+(defn- process-commands [state commands]
+  (reduce (fn [[game-state units] command]
+            (let [player-state (find-player-state (:player command) state)
+                  unit-state (find-unit-state (:target-id command) player-state)]
+              (if (not (nil? unit-state)) ; (some #(action= unit-state %) [:move :collect]))
+                [(process-command-for-unit game-state player-state unit-state command) (cons unit-state units)]
+                [game-state units])))
+          [state []] 
+          commands))
 
 (defn process-units [state commands]
-  (map-player-states (partial process-player-units state commands) state))
+  (let [[processed-state processed-units] (process-commands state commands)]
+    (map-player-states (partial process-player-units processed-state processed-units) processed-state)))
+
 

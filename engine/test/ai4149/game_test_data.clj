@@ -28,7 +28,8 @@
             :cost 500
             :build-time 10
             :built-by :factory
-            :shape [[-4 -4] [4 -4] [4 4] [-4 4]]}
+            :shape [[-4 -4] [4 -4] [4 4] [-4 4]]
+            :actions {:collect 1000}}
            #ai4149.messages.UnitRule
            {:name "Tank"
             :type :tank
@@ -55,7 +56,8 @@
    :map #ai4149.messages.GameMap{:width 500
                                  :height 500
                                  :obstacles []
-                                 :territory []}
+                                 :resources [#ai4149.messages.Resource{:position #ai4149.messages.Coordinates[200 200]
+                                                                       :amount 10000}]}
    :player-states
    [#ai4149.messages.PlayerState
     {:player "player-1"
@@ -80,6 +82,12 @@
                    {:id "p2-u1"
                     :type :commander
                     :position #ai4149.messages.Coordinates[160 200]
+                    :health 100
+                    :action :idle
+                    :action-coordinates nil}
+                   {:id "p2-harvester-1"
+                    :type :harvester
+                    :position #ai4149.messages.Coordinates[200 200]
                     :health 100
                     :action :idle
                     :action-coordinates nil}
