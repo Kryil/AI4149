@@ -58,7 +58,10 @@
       (fact "unit is inside map"
         (let [unit-area (collisions/get-unit-area new-unit (:rules completed-state))]
           (every? #(>= % 0) (flatten unit-area)) => true
-          ; todo check that coords are smaller than map width & height
+          (every? #(and (< (first %) (get-in completed-state [:map :width])) 
+                        (< (second %) (get-in completed-state [:map :height])))
+                  unit-area) => true
+          ; todo check that unit is inside map when factory is at the corner
           ))
 
       ; todo units can not be placed on top of each other

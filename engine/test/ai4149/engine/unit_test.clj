@@ -63,6 +63,5 @@
 
 ; todo test obstructed movement against map
 ; todo dead units can not be ordered around
-; todo obstructed units can continue when the path is cleared
 
 

@@ -52,6 +52,10 @@
             :build-time 5
             :built-by :commander
             :shape [[-10 -10] [10 -10] [10 10] [-10 10]]}]
+   :map #ai4149.messages.GameMap{:width 500
+                                 :height 500
+                                 :obstacles []
+                                 :territory []}
    :player-states
    [#ai4149.messages.PlayerState
     {:player "player-1"

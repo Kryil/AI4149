@@ -67,13 +67,18 @@
    built-by
    shape
    weapons])
-   
+
+(defrecord GameMap
+  [width
+   height
+   obstacles
+   territory])
 
 (defrecord FullGameState
   [^Integer turn
    ^Integer turns
    rules
-   ; todo map
+   map
    ^"[Lai4149.messages.PlayerState;" player-states
    projectiles])
 
