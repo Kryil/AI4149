@@ -71,8 +71,14 @@
     (fact "resouces where substracted from map"
       (let [resource (first (filter (fn [r] (= (:position r) (Coordinates. 200 200))) 
                                     (get-in collect-state [:map :resources])))]
-        (:amount resource) => 9000))))
-; todo if resource field does not have as much as unit can collect 
+        (:amount resource) => 500))
+    (let [recollect-state (game/process-turn collect-state [command])
+          rep-state (find-player-state "player-2" recollect-state)]
+      (fact "when collecting more than the field has, only what field has is returned"
+        (:resources rep-state) => 3000)
+      (fact "resource was removed from map"
+        (count (get-in recollect-state [:map :resources])) => 0))))
+
 ; todo errors
 
 

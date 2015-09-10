@@ -57,7 +57,7 @@
                                  :height 500
                                  :obstacles []
                                  :resources [#ai4149.messages.Resource{:position #ai4149.messages.Coordinates[200 200]
-                                                                       :amount 10000}]}
+                                                                       :amount 1500}]}
    :player-states
    [#ai4149.messages.PlayerState
     {:player "player-1"

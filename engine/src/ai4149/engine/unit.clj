@@ -31,14 +31,17 @@
         collect-amount (get-in unit-rule [:actions :collect])
         unit-position (:position unit-state)
         resource (some #(when (= (:position %) unit-position) %) (get-in state [:map :resources]))
-        subtracted-resource (update-in resource [:amount] #(- % collect-amount))]
+        subtracted-resource (update-in resource [:amount] #(- % collect-amount))
+        collected-amount (if (< (:amount resource) collect-amount) (:amount resource) collect-amount)]
     (if (and (not (nil? resource)) (not (nil? collect-amount)))
       (assoc 
         (update-state state
                       :player-states
-                      (update-in player-state [:resources] #(+ % collect-amount)))
+                      (update-in player-state [:resources] #(+ % collected-amount)))
         :map
-        (update-state (:map state) :resources subtracted-resource :position))
+        (if (> (:amount subtracted-resource) 0)
+          (update-state (:map state) :resources subtracted-resource :position)
+          (remove-from-state (:map state) :resources :position (:position subtracted-resource))))
       state)))
 
 
