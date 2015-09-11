@@ -58,51 +58,55 @@
                                  :obstacles []
                                  :resources [#ai4149.messages.Resource{:position #ai4149.messages.Coordinates[200 200]
                                                                        :amount 1500}]}
-   :player-states
-   [#ai4149.messages.PlayerState
-    {:player "player-1"
-     :resources 2000
-     :unit-states [#ai4149.messages.UnitState
-                   {:id "p1-commander"
-                    :type :commander
-                    :position #ai4149.messages.Coordinates[30 12]
-                    :health 100
-                    :action :idle
-                    :action-coordinates nil}]
-     :building-states [#ai4149.messages.BuildingState{:id "p1-b1" 
-                                                      :type :factory
-                                                      :position #ai4149.messages.Coordinates[10 15]
-                                                      :health 100
-                                                      :action :idle
-                                                      :action-args nil}]}
-    #ai4149.messages.PlayerState
-    {:player "player-2"
-     :resources 1500
-     :unit-states [#ai4149.messages.UnitState
-                   {:id "p2-u1"
-                    :type :commander
-                    :position #ai4149.messages.Coordinates[160 200]
-                    :health 100
-                    :action :idle
-                    :action-coordinates nil}
-                   {:id "p2-harvester-1"
-                    :type :harvester
-                    :position #ai4149.messages.Coordinates[200 200]
-                    :health 100
-                    :action :idle
-                    :action-coordinates nil}
-                   #ai4149.messages.UnitState
-                   {:id "p2-tank-1"
-                    :type :tank
-                    :position #ai4149.messages.Coordinates[45 33]
-                    :health 100
-                    :action :idle
-                    :action-coordinates nil}]
-     :building-states [#ai4149.messages.BuildingState{:id "p2-b1" 
-                                                      :type :factory
-                                                      :position #ai4149.messages.Coordinates[100 150]
-                                                      :health 100
-                                                      :action :idle
-                                                      :action-args nil}]}]})
+   :players {"player-1"
+             #ai4149.messages.PlayerState
+             {:player "player-1"
+              :resources 2000
+              :units {"p1-commander" 
+                      #ai4149.messages.UnitState {:id "p1-commander"
+                                                  :type :commander
+                                                  :position #ai4149.messages.Coordinates[30 12]
+                                                  :health 100
+                                                  :action :idle
+                                                  :action-coordinates nil}
+                      "p1-b1"
+                      #ai4149.messages.BuildingState{:id "p1-b1" 
+                                                     :type :factory
+                                                     :position #ai4149.messages.Coordinates[10 15]
+                                                     :health 100
+                                                     :action :idle
+                                                     :action-args nil}}}
+             "player-2"
+             #ai4149.messages.PlayerState
+             {:player "player-2"
+              :resources 1500
+              :units {"p2-u1"
+                      #ai4149.messages.UnitState {:id "p2-u1"
+                                                  :type :commander
+                                                  :position #ai4149.messages.Coordinates[160 200]
+                                                  :health 100
+                                                  :action :idle
+                                                  :action-coordinates nil}
+                      "p2-harvester-1"
+                      #ai4149.messages.UnitState {:id "p2-harvester-1"
+                                                  :type :harvester
+                                                  :position #ai4149.messages.Coordinates[200 200]
+                                                  :health 100
+                                                  :action :idle
+                                                  :action-coordinates nil}
+                      "p2-tank-1"
+                      #ai4149.messages.UnitState {:id "p2-tank-1"
+                                                  :type :tank
+                                                  :position #ai4149.messages.Coordinates[45 33]
+                                                  :health 100
+                                                  :action :idle
+                                                  :action-coordinates nil}
+                      "p2-b1"
+                      #ai4149.messages.BuildingState{:id "p2-b1" 
+                                                     :type :factory
+                                                     :position #ai4149.messages.Coordinates[100 150]
+                                                     :health 100
+                                                     :action :idle
+                                                     :action-args nil}}}}})
 
 

@@ -38,10 +38,11 @@
           (:action unit) => :dead
           (:action-args unit) => "p1-commander"))
       (fact "dead units are removed from the field"
+        (count (:units p2-state)) => 4
         (let [next-state (game/process-turn repeated-fire [])
               p2-state (find-player-state "player-2" next-state)]
           (find-unit-state "p2-tank-1" p2-state) => nil
-          (count (:unit-states p2-state)) => 2)))))
+          (count (:units p2-state)) => 3)))))
 
 
 ; todo projectiles hit on any object in the path, including walls on the map

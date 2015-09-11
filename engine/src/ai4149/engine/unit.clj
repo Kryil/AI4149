@@ -35,29 +35,23 @@
         collected-amount (if (< (:amount resource) collect-amount) (:amount resource) collect-amount)]
     (if (and (not (nil? resource)) (not (nil? collect-amount)))
       (assoc 
-        (update-state state
-                      :player-states
-                      (update-in player-state [:resources] #(+ % collected-amount)))
+        (update-in state [:players (:player player-state) :resources] #(+ % collected-amount))
         :map
         (if (> (:amount subtracted-resource) 0)
-          (update-state (:map state) :resources subtracted-resource :position)
-          (remove-from-state (:map state) :resources :position (:position subtracted-resource))))
+          (update-list (:map state) :resources subtracted-resource :position)
+          (remove-from-list (:map state) :resources :position (:position subtracted-resource))))
       state)))
 
 
 (defn process-command-for-unit [state player-state unit-state command]
   (cond
     (action= command :collect) (process-collect-command state player-state unit-state)
-    :else (update-state 
-            state
-            :player-states
-            (update-state 
-              player-state 
-              :unit-states
-              (cond
-                (action= command :move) (process-unit-move-command state player-state unit-state command)
-                :else unit-state))
-            :player)))
+    :else (assoc-in 
+            state 
+            [:players (:player player-state) :units (:id unit-state)]
+            (cond
+              (action= command :move) (process-unit-move-command state player-state unit-state command)
+              :else unit-state))))
 
 (defn process-player-units [state processed-units player-state]
   (map-player-unit-states 

@@ -32,8 +32,9 @@
       (fact "new move command overrides previous command"
         (:action commander) => :moving
         (:action-args commander) => [(Coordinates. 35 30)]
-        (:position commander) => (Coordinates. 35 17))))
-       
+        (:position commander) => (Coordinates. 35 17)))))
+
+(facts "moving error conditions"
   (let [command (PlayerCommand. "player-1" "p1-commander" :move [(Coordinates. 11 16)])
         updated-state (game/process-turn simple-test-state [command])
         p-state (find-player-state "player-1" updated-state)
@@ -52,8 +53,8 @@
           (:action n-commander) => :obstructed
           (:position n-commander) => (Coordinates. 30 12)
           (:action-args n-commander) => [(Coordinates. 11 16)]))
-      (let [p-state-without-factory (remove-from-state p-state :building-states :id "p1-b1")
-            state-without-factory (update-state updated-state :player-states p-state-without-factory :player)
+      (let [p-state-without-factory (update-in p-state [:units] #(dissoc % "p1-b1"))
+            state-without-factory (assoc-in updated-state [:players "player-1"] p-state-without-factory)
             next-state (game/process-turn state-without-factory [])
             next-p-state (find-player-state "player-1" next-state)
             next-commander (find-unit-state "p1-commander" next-p-state)]

@@ -16,7 +16,7 @@
         p-state (find-player-state "player-1" updated-state)]
 
     (fact "factories can build harvesters"
-      (let [b-state (find-building-state "p1-b1" p-state)]
+      (let [b-state (find-unit-state "p1-b1" p-state)]
         (:action b-state) => :constructing
         (:action-args b-state) => [:harvester 10]))
 
@@ -24,28 +24,28 @@
       (:resources p-state) => 1500)
 
     (fact "build command does not mess up the state"
-      (count (:player-states updated-state)) => 2
-      (map :player (:player-states updated-state)) => ["player-1" "player-2"])
+      (count (:players updated-state)) => 2
+      (keys (:players updated-state)) => ["player-1" "player-2"])
 
     (fact "processing a turn decreases remaining build time"
       (let [updated-state (game/process-turn updated-state [])
             p-state (find-player-state "player-1" updated-state)
-            b-state (find-building-state "p1-b1" p-state)]
+            b-state (find-unit-state "p1-b1" p-state)]
         (:action b-state) => :constructing
         (:action-args b-state) => [:harvester 9]))
 
     (let [completed-state (reduce (fn [state n] (game/process-turn state [])) updated-state (range 10))
           p-state (find-player-state "player-1" completed-state)
-          b-state (find-building-state "p1-b1" p-state)
-          new-unit (some #(when (= (:action %) :new) %) (:unit-states p-state))]
+          b-state (find-unit-state "p1-b1" p-state)
+          new-unit (some #(when (= (:action %) :new) %) (vals (:units p-state)))]
       (fact "unit is placed on player units when completed"
         (:action b-state) => :idle
           (:action-args b-state) => nil)
       (fact "new state is changed to idle on next turn"
         (let [next-state (game/process-turn completed-state [])
               next-p-state (find-player-state "player-1" next-state)
-              next-new-unit (some #(when (= (:action %) :new) %) (:unit-states next-p-state))
-              same-id-unit (some #(when (= (:id %) (:id new-unit)) %) (:unit-states next-p-state))]
+              next-new-unit (some #(when (= (:action %) :new) %) (vals (:units next-p-state)))
+              same-id-unit (some #(when (= (:id %) (:id new-unit)) %) (vals (:units next-p-state)))]
           new-unit =not=> nil
           next-new-unit => nil
           same-id-unit =not=> nil
@@ -74,13 +74,13 @@
 (facts "can not build if not enough resources"
   (let [command #ai4149.messages.PlayerCommand["player-1" "p1-b1" :build :harvester]
         reduced-resources-state (update-in simple-test-state 
-                                           [:player-states] 
-                                           (fn [l] (map (fn [ps] (assoc ps :resources 300)) l)))
+                                           [:players "player-1"] 
+                                           (fn [ps] (assoc ps :resources 300)))
         updated-state (game/process-turn reduced-resources-state [command])
         p-state (find-player-state "player-1" updated-state)]
 
     (fact "building did not start"
-      (let [b-state (find-building-state "p1-b1" p-state)]
+      (let [b-state (find-unit-state "p1-b1" p-state)]
         (:action b-state) => :idle
         (:action-args b-state) => nil))
 
@@ -92,8 +92,8 @@
       (second (first (:errors p-state))) => :no-resources)
 
     (fact "build command does not mess up the state"
-      (count (:player-states updated-state)) => 2
-      (map :player (:player-states updated-state)) => ["player-1" "player-2"])))
+      (count (:players updated-state)) => 2
+      (keys (:players updated-state)) => ["player-1" "player-2"])))
 
 (facts "can not build units without cost"
   (let [command #ai4149.messages.PlayerCommand["player-1" "p1-b1" :build :commander]
@@ -101,7 +101,7 @@
         p-state (find-player-state "player-1" updated-state)]
 
     (fact "building did not start"
-      (let [b-state (find-building-state "p1-b1" p-state)]
+      (let [b-state (find-unit-state "p1-b1" p-state)]
         (:action b-state) => :idle
         (:action-args b-state) => nil))
 
@@ -118,7 +118,7 @@
         p-state (find-player-state "player-1" updated-state)]
 
     (fact "building did not start"
-      (let [b-state (find-building-state "p1-b1" p-state)]
+      (let [b-state (find-unit-state "p1-b1" p-state)]
         (:action b-state) => :idle
         (:action-args b-state) => nil))
 
@@ -135,7 +135,7 @@
         p-state (find-player-state "player-1" updated-state)]
 
     (fact "building did not start"
-      (let [b-state (find-building-state "p1-b1" p-state)]
+      (let [b-state (find-unit-state "p1-b1" p-state)]
         (:action b-state) => :idle
         (:action-args b-state) => nil))
 
@@ -153,7 +153,7 @@
         p-state (find-player-state "player-1" updated-state)]
 
     (fact "first build started"
-      (let [b-state (find-building-state "p1-b1" p-state)]
+      (let [b-state (find-unit-state "p1-b1" p-state)]
         (:action b-state) => :constructing
         (:action-args b-state) => [:harvester 10]))
 
@@ -163,7 +163,7 @@
     (let [tank-command #ai4149.messages.PlayerCommand["player-1" "p1-b1" :build :tank]
           tank-state (game/process-turn updated-state [tank-command])
           p-state (find-player-state "player-1" tank-state)
-          b-state (find-building-state "p1-b1" p-state)]
+          b-state (find-unit-state "p1-b1" p-state)]
       (fact "attempting a build again does not alter factory status"
           (:action b-state) => :constructing
           (:action-args b-state) => [:harvester 9])

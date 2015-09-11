@@ -11,11 +11,12 @@
 (defn process-turn 
   "Apply all player actions into given state and return updated state."
   [state player-commands]
-  (->
-    state
-    (process-units player-commands)
-    (process-factories)
-    (process-fire-commands (filter (fn [cmd] (action= cmd :fire)) player-commands))
-    (move-projectiles)
-    (process-build-commands (filter (fn [cmd] (= (:action cmd) :build)) player-commands))
-    increase-turn-counter))
+  (let [next-state (->
+                     state
+                     (process-units player-commands)
+                     (process-factories)
+                     (process-fire-commands (filter (fn [cmd] (action= cmd :fire)) player-commands))
+                     (move-projectiles)
+                     (process-build-commands (filter (fn [cmd] (= (:action cmd) :build)) player-commands))
+                     increase-turn-counter)]
+    next-state))

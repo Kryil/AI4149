@@ -47,8 +47,7 @@
 (defrecord PlayerState
   [player
    resources
-   ^"[Lai4149.messages.UnitState;" unit-states
-   ^"[Lai4149.messages.BuildingState;" building-states
+   units
    errors])
 
 (defrecord WeaponRule
@@ -84,6 +83,6 @@
    ^Integer turns
    rules
    map
-   ^"[Lai4149.messages.PlayerState;" player-states
+   ^"[Lai4149.messages.PlayerState;" players
    projectiles])
 

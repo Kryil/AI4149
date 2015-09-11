@@ -3,17 +3,12 @@
 (defn find-player-state 
   "Search a PlayerState record from game state by player name"
   [player state]
-  (first (filter (fn [ps] (= (:player ps) player)) (:player-states state))))
-
-(defn find-building-state 
-  "Search for a building state record from player state by building name"
-  [building player-state]
-  (first (filter (fn [bs] (= (:id bs) building)) (:building-states player-state))))
+  (get (:players state) player))
 
 (defn find-unit-state
   "Search for an unit state from player state"
   [unit player-state]
-  (first (filter (fn [us] (= (:id us) unit)) (:unit-states player-state))))
+  (get (:units player-state) unit))
 
 (defn find-unit-rule
   "Search for unit rule"
@@ -29,40 +24,46 @@
   (weapon (:weapons (find-unit-rule unit-type rules))))
 
 (defn map-state 
-  "Apply function f to each item in state selected by k."
+  "Apply function f to each item in state selected by k.
+  Selected value is expected to be a map.
+  Keys are preserved as is and only value is passed to f. 
+  If f returns nil, key is removed from the map."
   [f state k]
-  (assoc state k (filter (complement nil?) (map f (k state)))))
+  (assoc state k (into (sorted-map)
+                       (filter (fn [[sk sv]] (not (nil? sv))) 
+                               (map (fn [[sk sv]] [sk (f sv)]) 
+                                    (k state))))))
 
 (defn map-player-states 
   "Apply a function to every player state and return updated state"
   [f state]
-  (map-state f state :player-states))
+  (map-state f state :players))
 
 (defn map-player-building-states 
   "Apply a function to every building state in given player state and return updated player state"
   [f player-state]
-  (map-state f player-state :building-states))
+  (map-state f player-state :units))
 
 (defn map-player-unit-states 
   "Apply a function to every units state in given player state and return updated player state"
   [f player-state]
-  (map-state f player-state :unit-states))
+  (map-state f player-state :units))
 
-(defn update-state 
+(defn update-list 
   "Replaces item in state in coll defined by k with new-state-val compared by key-fn."
-  ([state k new-val] (update-state state k new-val :id))
+  ([state k new-val] (update-list state k new-val :id))
   ([state k new-val val-fn]
    (assoc state 
           k 
           (cons new-val 
                 (filter (fn [s] (not= (val-fn s) (val-fn new-val))) (k state))))))
 
-(defn add-to-state 
+(defn add-to-list 
   "Add new-val to state coll k."
   [state k new-val]
   (assoc state k (cons new-val (k state))))
 
-(defn remove-from-state
+(defn remove-from-list
   [state k id-fn val-id]
   (assoc state k (filter (fn [s] (not= (id-fn s) val-id)) (k state))))
 
@@ -72,6 +73,10 @@
 
 (defmacro action= [a-state action]
   `(= (:action ~a-state) ~action))
+
+(defmacro type= [a-state t]
+  `(= (:type ~a-state) ~t))
+
 
 (defmacro on-action 
   "Tests if :action matches in given state. If true, evaluates and returns then expr,

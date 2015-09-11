@@ -27,12 +27,12 @@
       (collisions/area-free? simple-test-state occupied-area) => falsey)))
 
 (fact "unit shape normalization"
-  (collisions/get-normalized-unit-shape (get-in simple-test-state [:player-states 0 :unit-states 0])
+  (collisions/get-normalized-unit-shape (get-in simple-test-state [:players "player-1" :units "p1-commander"])
                                         (:rules simple-test-state)) => [[0 0] [0 10] [10 0] [10 10]])
 
 
 (fact "unit size is calculated correctly"
-  (collisions/get-unit-size (get-in simple-test-state [:player-states 0 :unit-states 0])
+  (collisions/get-unit-size (get-in simple-test-state [:players "player-1" :units "p1-commander"])
                             (:rules simple-test-state)) => [11 11])
 
 (fact "bordering boxes are generated"

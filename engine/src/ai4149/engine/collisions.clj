@@ -138,11 +138,9 @@
   ([state] (all-areas state []))
   ([state not-ids]
     (let [rules (:rules state)
-          player-states (:player-states state)
-          units (filter (fn [us] (every? #(not= (:id us) %) not-ids)) (apply concat (map :unit-states player-states)))
-          buildings (filter (fn [bs] (every? #(not= (:id bs) %) not-ids)) (apply concat (map :building-states player-states)))]
-      (concat (map #(get-unit-area % rules) units) 
-              (map #(get-unit-area % rules) buildings)))))
+          players (vals (:players state))
+          units (filter (fn [us] (every? #(not= (:id us) %) not-ids)) (apply concat (map #(vals (:units %)) players)))]
+      (map #(get-unit-area % rules) units))))
      
 
 (defn area-free? 
@@ -154,11 +152,8 @@
 (defn in-area [state area]
   (let [rules (:rules state)
         pred (partial area-intersects? area)]
-    (map (fn [ps] [(:player ps) 
-                   (concat
-                     (filter #(pred (get-unit-area % rules)) (:unit-states ps))
-                     (filter #(pred (get-unit-area % rules)) (:building-states ps)))])
-         (:player-states state))))
+    (map (fn [[p-id ps]] [p-id (filter #(pred (get-unit-area (second %) rules)) (:units ps))])
+         (:players state))))
 
 (defn nearest-in-area 
   ([state area] (nearest-in-area state area (get-center-coordinates area)))
@@ -189,7 +184,10 @@
         coords (coords-between a b)
         units-in-area (in-area state area)]
     (map (fn [[player units]]
-           [player (filter (fn [u] (some #(coord-intersects? (get-unit-area u (:rules state)) %) coords)) units)])
+           [player (map second (filter (fn [[u-id u]] 
+                                         (some #(coord-intersects? (get-unit-area u (:rules state)) %) 
+                                               coords)) 
+                                       units))])
          units-in-area)))
 
 (defn nearest-between-coords 
