@@ -67,6 +67,9 @@
   [state k id-fn val-id]
   (assoc state k (filter (fn [s] (not= (id-fn s) val-id)) (k state))))
 
+(defn add-player-error [state player command error]
+  (update-in state [:players player :errors] (fn [ers] (cons [command error] ers))))
+
 
 (defn uuid [] (str (java.util.UUID/randomUUID)))
 

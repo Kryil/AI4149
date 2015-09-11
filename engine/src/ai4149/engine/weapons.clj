@@ -30,26 +30,29 @@
           :else state)))
 
 (defn move-projectiles [state]
-  (reduce move-projectile (assoc state :projectiles []) (:projectiles state))
-
-  #_(let [moved-projectiles (filter (complement nil?) (map (partial move-projectile state) (:projectiles state)))]
-    (assoc state :projectiles moved-projectiles)))
+  (reduce move-projectile (assoc state :projectiles []) (:projectiles state)))
 
 (defn process-fire-command [state command]
   (let [player (:player command)
         unit-id (:target-id command)
         [weapon target-coords] (:action-args command)
         player-state (find-player-state player state)
-        unit (find-unit-state unit-id player-state)
-        weapon-rule (find-unit-weapon-rule (:type unit) weapon (:rules state))]
-    ; todo if weapon rule is nil then error
-    (let [projectile (Projectile. (:range weapon-rule)
-                                  (:velocity weapon-rule)
-                                  (:damage weapon-rule)
-                                  (:position unit)
-                                  target-coords
-                                  (:id unit))]
-      (add-to-list state :projectiles projectile))))
+        unit (find-unit-state unit-id player-state)]
+    (cond 
+      (nil? unit) (add-player-error state player command :unit-not-found) 
+      (action= unit :dead) (add-player-error state player command :unit-dead)
+      :else
+      (let [weapon-rule (find-unit-weapon-rule (:type unit) weapon (:rules state))]
+        (if (nil? weapon-rule)
+          ; todo error messages
+          state
+          (let [projectile (Projectile. (:range weapon-rule)
+                                        (:velocity weapon-rule)
+                                        (:damage weapon-rule)
+                                        (:position unit)
+                                        target-coords
+                                        (:id unit))]
+            (add-to-list state :projectiles projectile)))))))
 
 (defn process-fire-commands [state commands]
   (reduce process-fire-command state commands))

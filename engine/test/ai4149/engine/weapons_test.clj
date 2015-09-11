@@ -31,7 +31,8 @@
     (fact "projectile hits the tank"
       (:health p2-tank-state) => 80)
 
-    (let [repeated-fire (reduce (fn [state _] (game/process-turn state [hit-command])) simple-test-state (range 5))
+    (let [to-die-next-turn (reduce (fn [state _] (game/process-turn state [hit-command])) simple-test-state (range 4))
+          repeated-fire (game/process-turn to-die-next-turn [hit-command])
           p2-state (find-player-state "player-2" repeated-fire)]
       (fact "unit is marked as dead on the turn it dies"
         (let [unit (find-unit-state "p2-tank-1" p2-state)]
@@ -42,9 +43,25 @@
         (let [next-state (game/process-turn repeated-fire [])
               p2-state (find-player-state "player-2" next-state)]
           (find-unit-state "p2-tank-1" p2-state) => nil
-          (count (:units p2-state)) => 3)))))
+          (count (:units p2-state)) => 3))
+      (fact "dead units are removed before fire commands"
+        (let [command (PlayerCommand. "player-2" "p2-tank-1" :fire [:main (Coordinates. 30 30)])
+              next-state (game/process-turn repeated-fire [command])
+              p2-state (find-player-state "player-2" next-state)]
+          (find-unit-state "p2-tank-1" p2-state) => nil
+          (count (:projectiles next-state)) => 0
+          (second (first (:errors p2-state))) => :unit-not-found))
+      (fact "unit that will die to bullet fired this turn can still shoot"
+        (let [fire-command (PlayerCommand. "player-2" "p2-tank-1" :fire [:main (Coordinates. 300 30)])
+              next-state (game/process-turn to-die-next-turn [hit-command fire-command])
+              p2-state (find-player-state "player-2" next-state)
+              unit (find-unit-state "p2-tank-1" p2-state)]
+          (:action unit) => :dead
+          (count (:projectiles next-state)) => 1
+          (:shooter (first (:projectiles next-state))) => "p2-tank-1")))))
 
 
+; todo test dying conditions to bullets in-flight (fired on previous turn)
 ; todo projectiles hit on any object in the path, including walls on the map
 ; todo armor effects are included in damage calculation
 ; todo units without weapon can not shoot

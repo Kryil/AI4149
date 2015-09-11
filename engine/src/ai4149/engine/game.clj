@@ -13,7 +13,7 @@
   [state player-commands]
   (let [next-state (->
                      state
-                     (process-units player-commands)
+                     (process-units (filter (fn [cmd] (not (action= cmd :fire))) player-commands))
                      (process-factories)
                      (process-fire-commands (filter (fn [cmd] (action= cmd :fire)) player-commands))
                      (move-projectiles)

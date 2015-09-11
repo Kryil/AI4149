@@ -70,8 +70,12 @@
   (reduce (fn [[game-state units] command]
             (let [player-state (find-player-state (:player command) state)
                   unit-state (find-unit-state (:target-id command) player-state)]
-              (if (not (nil? unit-state)) ; (some #(action= unit-state %) [:move :collect]))
-                [(process-command-for-unit game-state player-state unit-state command) (cons unit-state units)]
+              (if (not (nil? unit-state)) 
+                (let [next-state (process-command-for-unit game-state player-state unit-state command)
+                      next-player-state (find-player-state (:player command) next-state)
+                      errored (> (count (:errors next-player-state))
+                                 (count (:errors player-state)))]
+                [next-state (if errored units (cons unit-state units))])
                 [game-state units])))
           [state []] 
           commands))
