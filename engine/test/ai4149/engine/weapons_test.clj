@@ -22,6 +22,16 @@
       (fact "projectile was removed from the list when range was reached"
         (count (:projectiles next-state)) => 0))))
 
+(fact "unit without weapon can not fire"
+  (let [command (PlayerCommand. "player-1" "p1-b1" :fire [:main (Coordinates. 100 100)])
+        updated-state (game/process-turn simple-test-state [command])
+        p-state (find-player-state "player-1" updated-state)]
+    (fact "there are no projectiles"
+      (count (:projectiles updated-state)) => 0)
+    (fact "player state has errors"
+      (count (:errors p-state)) => 1
+      (first (:errors p-state)) => [command :no-weapon])))
+
 (facts "hitting a target" 
   (let [hit-command (PlayerCommand. "player-1" "p1-commander" :fire [:main (Coordinates. 49 36)])
         updated-state (game/process-turn simple-test-state [hit-command])

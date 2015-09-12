@@ -44,8 +44,7 @@
       :else
       (let [weapon-rule (find-unit-weapon-rule (:type unit) weapon (:rules state))]
         (if (nil? weapon-rule)
-          ; todo error messages
-          state
+          (add-player-error state player command :no-weapon)
           (let [projectile (Projectile. (:range weapon-rule)
                                         (:velocity weapon-rule)
                                         (:damage weapon-rule)
