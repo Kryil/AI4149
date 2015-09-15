@@ -74,5 +74,4 @@
 ; todo test dying conditions to bullets in-flight (fired on previous turn)
 ; todo projectiles hit on any object in the path, including walls on the map
 ; todo armor effects are included in damage calculation
-; todo units without weapon can not shoot
 ; todo test that buildings can die
