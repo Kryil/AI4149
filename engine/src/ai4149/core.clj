@@ -2,10 +2,10 @@
   (:require [clojure.data.json :as json]
             [ai4149.engine.game :as game]
             [ai4149.messages :refer :all])
-  (:import [ai44149.messages Resource]
-           [ai44149.messages Coordinates])
+  (:import [ai4149.messages Resource]
+           [ai4149.messages Coordinates]))
 
-(def default-new-game #ai4149.messsages.FullGameState
+(def default-new-game #ai4149.messages.FullGameState
   {:turn 0 
    :turns 50
    :rules [#ai4149.messages.UnitRule
@@ -58,7 +58,7 @@
    :map #ai4149.messages.GameMap{:width 500
                                  :height 500
                                  :obstacles []
-                                 :resources [(Resource. (Coordinates. 200 200) 1500)}]}
+                                 :resources [(Resource. (Coordinates. 200 200) 1500)]}
    :players {"player-1"
              #ai4149.messages.PlayerState
              {:player "player-1"
@@ -124,7 +124,13 @@
                                                      :action :idle
                                                      :action-args nil}}}}})
 
+(defn serialize [game-id state]
+  (let [dir (clojure.java.io/file (str "c:/temp/ai4149/" game-id))]
+    (when-not (.exists dir) (.mkdir dir)))
+  (with-open [w (clojure.java.io/writer (str "c:/temp/ai4149/" game-id "/turn-" (:turn state) ".clj") :encoding "UTF-8")]
+    (.write w (prn-str state))))
+
 
 (defn game-handler [msg-in]
   (let [games (atom {})]
-    ))
+    nil))
